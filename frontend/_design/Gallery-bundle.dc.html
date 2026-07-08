@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<template id="__bundler_thumbnail" data-bg-color="#17140f">
+  <svg viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
+    <rect width="1200" height="800" fill="#17140f"/>
+    <rect x="360" y="250" width="200" height="300" rx="10" fill="#c9bda6"/>
+    <rect x="580" y="250" width="260" height="140" rx="10" fill="#bcc0bd"/>
+    <rect x="580" y="410" width="260" height="140" rx="10" fill="#cbc3b4"/>
+    <text x="600" y="640" text-anchor="middle" fill="#ece6d9" font-family="Georgia, serif" font-size="44" font-style="italic">Robin Beier</text>
+  </svg>
+</template>
+<x-dc>
+<helmet data-dc-atomics>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  a{color:var(--ink,#241f18);text-decoration:none}
+  input{font-family:inherit}
+  ::selection{background:rgba(140,120,90,.22)}
+  ::-webkit-scrollbar{width:0;height:0}
+  *{scrollbar-width:none}
+  @keyframes vfade{from{opacity:0}to{opacity:1}}
+  @keyframes vrise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+</style>
+</helmet>
+
+<div style="{{ rootStyle }}">
+
+  <sc-if value="{{ notPhoto }}" hint-placeholder-val="{{ true }}">
+  <div>
+  <!-- ============ TOP BAR ============ -->
+  <div style="{{ topbarStyle }}">
+    <div onClick="{{ goHome }}" style="font-family:'Newsreader',serif;font-weight:500;font-size:clamp(18px,2vw,21px);letter-spacing:-.01em;cursor:pointer">{{ photographer }}</div>
+    <sc-if value="{{ isDesktop }}" hint-placeholder-val="{{ true }}">
+      <div style="display:flex;align-items:center;gap:26px">
+        <span onClick="{{ goHome }}" style="{{ navWorkStyle }}">Work</span>
+        <span onClick="{{ goAlbums }}" style="{{ navAlbumsStyle }}">Albums</span>
+        <span onClick="{{ openSearch }}" style="{{ navSearchStyle }}">Search</span>
+        <button onClick="{{ toggleTheme }}" style="{{ themeBtnStyle }}">{{ themeLabel }}</button>
+      </div>
+    </sc-if>
+    <sc-if value="{{ isMobile }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;align-items:center;gap:20px;font-size:18px">
+        <span onClick="{{ openSearch }}" style="cursor:pointer">⌕</span>
+        <span onClick="{{ goAlbums }}" style="cursor:pointer;font-size:15px">▦</span>
+        <span onClick="{{ toggleTheme }}" style="cursor:pointer;font-size:15px">{{ themeGlyph }}</span>
+      </div>
+    </sc-if>
+  </div>
+
+  <!-- ============ CONTENT ============ -->
+  <div style="{{ contentWrapStyle }}">
+
+    <!-- ---- HOME ---- -->
+    <sc-if value="{{ showHome }}" hint-placeholder-val="{{ true }}">
+      <div>
+        <div style="margin-bottom:clamp(26px,4vw,40px)">
+          <h1 style="font-family:'Newsreader',serif;font-weight:400;font-size:clamp(30px,5.6vw,50px);line-height:1.04;letter-spacing:-.015em;margin:0;max-width:11em">Photographs from ten years of looking.</h1>
+          <div style="font:400 13px/1 system-ui,sans-serif;letter-spacing:.04em;color:var(--muted,rgba(36,31,24,.5));margin-top:16px">{{ homeStat }}</div>
+          <div onClick="{{ openSearch }}" style="margin-top:22px;display:flex;align-items:center;gap:10px;padding:12px 16px;border-radius:26px;background:var(--chip,rgba(36,31,24,.06));color:var(--muted,rgba(36,31,24,.5));font:400 13.5px system-ui,sans-serif;cursor:pointer;max-width:440px">
+            <span style="font-size:14px">⌕</span>Search tags, camera, place, date…
+          </div>
+        </div>
+
+        <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:14px">
+          <div style="font-family:'Newsreader',serif;font-weight:500;font-size:clamp(16px,2.2vw,19px)">Portfolios</div>
+          <span onClick="{{ goAlbums }}" style="font:400 12px system-ui;color:var(--muted,rgba(36,31,24,.5));cursor:pointer">See all →</span>
+        </div>
+        <div style="display:flex;gap:14px;overflow-x:auto;padding-bottom:6px;margin-bottom:clamp(30px,4vw,44px)">
+          <sc-for list="{{ albumsList }}" as="album" hint-placeholder-count="4">
+            <div onClick="{{ album.open }}" style="{{ album.stripStyle }}">
+              <div style="width:100%;height:clamp(96px,12vw,130px);background:{{ album.cover }};border-radius:10px"></div>
+              <div style="font-family:'Newsreader',serif;font-weight:500;font-size:15px;margin-top:9px">{{ album.name }}</div>
+              <div style="font:400 11px system-ui;color:var(--muted,rgba(36,31,24,.5));margin-top:2px">{{ album.countLabel }}</div>
+            </div>
+          </sc-for>
+        </div>
+
+        <div style="border-top:1px solid var(--line,rgba(36,31,24,.12));padding-top:18px;margin-bottom:6px">
+          <div style="font-family:'Newsreader',serif;font-weight:500;font-size:clamp(16px,2.2vw,19px)">All photographs</div>
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- ---- ALBUMS GRID ---- -->
+    <sc-if value="{{ showAlbums }}" hint-placeholder-val="{{ false }}">
+      <div>
+        <div style="margin-bottom:clamp(22px,3vw,34px)">
+          <div style="font:400 11px 'IBM Plex Mono',monospace;letter-spacing:.16em;text-transform:uppercase;color:var(--muted,rgba(36,31,24,.5))">{{ photographer }}</div>
+          <h1 style="font-family:'Newsreader',serif;font-weight:400;font-size:clamp(28px,5vw,46px);margin:8px 0 0;letter-spacing:-.01em">Portfolios</h1>
+        </div>
+        <div style="{{ albumsGridStyle }}">
+          <sc-for list="{{ albumsList }}" as="album" hint-placeholder-count="4">
+            <div onClick="{{ album.open }}" style="cursor:pointer">
+              <div style="width:100%;aspect-ratio:4/3;background:{{ album.cover }};border-radius:12px"></div>
+              <div style="display:flex;justify-content:space-between;align-items:baseline;margin-top:12px;gap:12px">
+                <div style="font-family:'Newsreader',serif;font-weight:500;font-size:clamp(17px,2.2vw,20px)">{{ album.name }}</div>
+                <div style="font:400 11px 'IBM Plex Mono',monospace;color:var(--muted,rgba(36,31,24,.5));white-space:nowrap">{{ album.count }}</div>
+              </div>
+              <div style="font:400 13px/1.5 system-ui;color:var(--muted,rgba(36,31,24,.5));margin-top:4px">{{ album.desc }}</div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- ---- ALBUM DETAIL ---- -->
+    <sc-if value="{{ showAlbum }}" hint-placeholder-val="{{ false }}">
+      <div style="margin-bottom:clamp(18px,3vw,28px)">
+        <span onClick="{{ goAlbums }}" style="font:400 11px 'IBM Plex Mono',monospace;letter-spacing:.06em;color:var(--muted,rgba(36,31,24,.5));cursor:pointer">← Portfolios</span>
+        <h1 style="font-family:'Newsreader',serif;font-weight:400;font-size:clamp(30px,5.4vw,48px);margin:12px 0 0;letter-spacing:-.015em">{{ currentAlbum.name }}</h1>
+        <div style="font:400 15px/1.6 system-ui;color:var(--muted,rgba(36,31,24,.5));margin-top:10px;max-width:34em">{{ currentAlbum.desc }}</div>
+        <div style="font:400 11px 'IBM Plex Mono',monospace;letter-spacing:.06em;color:var(--muted,rgba(36,31,24,.5));margin-top:14px">{{ currentAlbum.countLabel }}</div>
+      </div>
+    </sc-if>
+
+    <!-- ---- SEARCH ---- -->
+    <sc-if value="{{ showSearch }}" hint-placeholder-val="{{ false }}">
+      <div style="margin-bottom:clamp(20px,3vw,30px)">
+        <span onClick="{{ goHome }}" style="font:400 11px 'IBM Plex Mono',monospace;letter-spacing:.06em;color:var(--muted,rgba(36,31,24,.5));cursor:pointer">← Back</span>
+        <div style="margin-top:14px;display:flex;align-items:center;gap:12px;border-bottom:1.5px solid var(--ink,#241f18);padding-bottom:12px">
+          <span style="font-size:20px;color:var(--muted,rgba(36,31,24,.5))">⌕</span>
+          <input value="{{ query }}" onChange="{{ onQuery }}" placeholder="Search photographs…" style="flex:1;border:0;outline:0;background:transparent;color:var(--ink,#241f18);font-family:'Newsreader',serif;font-weight:400;font-size:clamp(20px,3vw,28px)">
+        </div>
+        <sc-for list="{{ facetGroups }}" as="group" hint-placeholder-count="4">
+          <div style="margin-top:20px">
+            <div style="font:400 10px 'IBM Plex Mono',monospace;letter-spacing:.14em;text-transform:uppercase;color:var(--muted,rgba(36,31,24,.5));margin-bottom:9px">{{ group.label }}</div>
+            <div style="display:flex;flex-wrap:wrap;gap:7px">
+              <sc-for list="{{ group.options }}" as="opt" hint-placeholder-count="5">
+                <span onClick="{{ opt.toggle }}" style="{{ opt.chipStyle }}">{{ opt.val }}</span>
+              </sc-for>
+            </div>
+          </div>
+        </sc-for>
+        <div style="font:400 11px 'IBM Plex Mono',monospace;letter-spacing:.06em;color:var(--muted,rgba(36,31,24,.5));margin-top:24px;border-top:1px solid var(--line,rgba(36,31,24,.12));padding-top:16px">{{ resultLabel }}</div>
+      </div>
+      <sc-if value="{{ emptyResults }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:40px 0;text-align:center;font-family:'Newsreader',serif;font-size:20px;color:var(--muted,rgba(36,31,24,.5))">No photographs match those filters.</div>
+      </sc-if>
+    </sc-if>
+
+    <!-- ---- SHARED MASONRY GRID ---- -->
+    <sc-if value="{{ showGrid }}" hint-placeholder-val="{{ true }}">
+      <div style="display:flex;gap:14px;align-items:flex-start">
+        <sc-for list="{{ columns }}" as="col" hint-placeholder-count="3">
+          <div style="flex:1;display:flex;flex-direction:column;gap:14px;min-width:0">
+            <sc-for list="{{ col.items }}" as="photo" hint-placeholder-count="3">
+              <div onClick="{{ photo.open }}" style="cursor:pointer;position:relative;border-radius:8px;overflow:hidden;animation:vrise .4s ease both">
+                <div style="width:100%;aspect-ratio:{{ photo.r }};background:{{ photo.grad }}"></div>
+                <div style="position:absolute;left:0;right:0;bottom:0;padding:34px 15px 13px;background:linear-gradient(to top,rgba(18,14,9,.74),rgba(18,14,9,0));opacity:0;transition:opacity .25s ease" style-hover="opacity:1">
+                  <div style="font-family:'Newsreader',serif;font-weight:500;font-size:14px;line-height:1.2;color:#fff">{{ photo.title }}</div>
+                  <div style="font:400 10.5px/1.4 system-ui;letter-spacing:.02em;color:rgba(255,255,255,.72);margin-top:3px">{{ photo.meta }}</div>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </sc-for>
+      </div>
+    </sc-if>
+
+  </div>
+  </div>
+  </sc-if>
+
+  <!-- ============ PHOTO PAGE ============ -->
+  <sc-if value="{{ viewer }}" hint-placeholder-val="{{ false }}">
+    <div style="{{ photoPageStyle }}">
+      <div style="{{ viewerImgWrapStyle }}">
+        <div style="{{ viewer.imgStyle }}"></div>
+        <button onClick="{{ viewer.prev }}" style="{{ viewerPrevStyle }}">←</button>
+        <button onClick="{{ viewer.next }}" style="{{ viewerNextStyle }}">→</button>
+      </div>
+      <div style="{{ viewerPanelStyle }}">
+        <span onClick="{{ viewer.close }}" style="font:400 11px 'IBM Plex Mono',monospace;letter-spacing:.08em;color:var(--muted,rgba(36,31,24,.5));cursor:pointer;margin-bottom:22px;align-self:flex-start">← {{ viewer.backLabel }}</span>
+        <div style="font:400 11px 'IBM Plex Mono',monospace;letter-spacing:.12em;color:var(--muted,rgba(36,31,24,.5))">{{ viewer.counter }}</div>
+        <h2 style="font-family:'Newsreader',serif;font-weight:400;font-size:clamp(24px,3.2vw,38px);line-height:1.08;letter-spacing:-.01em;margin:14px 0 0">{{ viewer.title }}</h2>
+        <p style="font:400 15px/1.65 system-ui;color:var(--ink,#241f18);opacity:.82;margin:16px 0 0;max-width:26em">{{ viewer.desc }}</p>
+        <div style="margin-top:28px;border-top:1px solid var(--line,rgba(36,31,24,.12));padding-top:22px;display:flex;flex-direction:column;gap:15px">
+          <div style="display:flex;gap:16px">
+            <div style="{{ metaKeyStyle }}">Camera</div>
+            <div style="{{ metaValStyle }}">{{ viewer.camLens }}</div>
+          </div>
+          <div style="display:flex;gap:16px">
+            <div style="{{ metaKeyStyle }}">Location</div>
+            <div style="{{ metaValStyle }}">{{ viewer.location }}</div>
+          </div>
+          <div style="display:flex;gap:16px">
+            <div style="{{ metaKeyStyle }}">Date</div>
+            <div style="{{ metaValStyle }}">{{ viewer.dateFmt }}</div>
+          </div>
+          <div style="display:flex;gap:16px">
+            <div style="{{ metaKeyStyle }}">Portfolio</div>
+            <div style="{{ metaValStyle }}">{{ viewer.albumName }}</div>
+          </div>
+        </div>
+        <div style="margin-top:22px;display:flex;flex-wrap:wrap;gap:7px">
+          <sc-for list="{{ viewer.tags }}" as="tag" hint-placeholder-count="3">
+            <span style="font:400 11px 'IBM Plex Mono',monospace;color:var(--muted,rgba(36,31,24,.5));background:var(--chip,rgba(36,31,24,.06));padding:5px 10px;border-radius:20px">#{{ tag }}</span>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;photographer&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;Robin Beier&quot;,&quot;tsType&quot;:&quot;string&quot;}}">
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = {
+      route: 'home',
+      albumId: null,
+      query: '',
+      filters: { tags: [], camera: [], location: [], year: [] },
+      viewer: null,
+      dark: false,
+      width: 1280,
+    };
+    this.manualTheme = false;
+    this.monthsShort = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    this.monthsFull = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+    this.albums = [
+      { id: 'coast', name: 'Coastlines', desc: 'Water, salt, and the shifting edges of land.' },
+      { id: 'city',  name: 'Cities',     desc: 'Concrete, glass, and the small hours.' },
+      { id: 'still', name: 'Still Life', desc: 'Objects, arranged and left alone.' },
+      { id: 'mount', name: 'Mountains',  desc: 'Altitude, weather, and a lot of quiet.' },
+    ];
+    const g = [
+      'linear-gradient(155deg,#c9bda6,#a89574)','linear-gradient(155deg,#bcc0bd,#969e98)',
+      'linear-gradient(155deg,#d3caba,#b3a68f)','linear-gradient(155deg,#c1b9a9,#9c8f78)',
+      'linear-gradient(155deg,#c7cac6,#9ba49d)','linear-gradient(155deg,#cbc3b4,#a99d88)',
+      'linear-gradient(155deg,#b7bcc0,#8f9498)','linear-gradient(155deg,#d6ccbb,#b8ab92)',
+      'linear-gradient(155deg,#a9b0ac,#7e8681)','linear-gradient(155deg,#ccc0ad,#a8987d)',
+      'linear-gradient(155deg,#c2c6c9,#989ea1)','linear-gradient(155deg,#d0c7b6,#aea083)',
+      'linear-gradient(155deg,#b5b0a4,#8a8478)','linear-gradient(155deg,#c8ccc9,#9ca4a0)',
+      'linear-gradient(155deg,#cebfa6,#a89170)','linear-gradient(155deg,#bfb8ab,#948b7b)',
+    ];
+    this.photos = [
+      { id:1,  title:'Low Tide, Cornwall', album:'coast', camera:'Leica Q2', lens:'28mm', location:'Cornwall, UK', date:'2024-09', tags:['coast','longexposure','dawn'], r:1.42, desc:'Thirty seconds of exposure at first light; the sea flattens into fog and the rocks become the only fixed thing.' },
+      { id:2,  title:'Salt Flats',         album:'coast', camera:'Sony A7 IV', lens:'35mm', location:'Utah, US', date:'2024-04', tags:['desert','minimal'], r:1.5,  desc:'A crust of white that runs to the horizon with no reference for scale.' },
+      { id:3,  title:'Blue Hour, Faro',    album:'coast', camera:'Sony A7 IV', lens:'55mm', location:'Faro, PT', date:'2026-03', tags:['dusk','water'], r:1.4,  desc:'Ten minutes after sunset, when the water and sky briefly share the same colour.' },
+      { id:4,  title:'Dune Path',          album:'coast', camera:'Leica Q2', lens:'28mm', location:'Comporta, PT', date:'2026-02', tags:['sand','minimal'], r:0.76, desc:'A boardwalk cutting through low dunes on an overcast afternoon.' },
+      { id:5,  title:'Cold Harbor',        album:'city',  camera:'Fuji X100V', lens:'23mm', location:'Oslo, NO', date:'2024-01', tags:['winter','architecture'], r:0.8, desc:'Waterfront concrete under flat January light.' },
+      { id:6,  title:'Rooftop, Lisbon',    album:'city',  camera:'Fuji X100V', lens:'23mm', location:'Lisbon, PT', date:'2023-07', tags:['rooftop','summer'], r:1.32, desc:'Tiled roofs stacked down the hill toward the river.' },
+      { id:7,  title:'Underpass',          album:'city',  camera:'Ricoh GR III', lens:'18mm', location:'Osaka, JP', date:'2023-11', tags:['street','concrete'], r:1.46, desc:'A single figure crossing a concrete underpass; everything else is grey.' },
+      { id:8,  title:'Night Kiosk',        album:'city',  camera:'Ricoh GR III', lens:'18mm', location:'Tokyo, JP', date:'2023-11', tags:['street','neon'], r:0.72, desc:'Late-night vending light against a wet street.' },
+      { id:9,  title:'Studio Still 04',    album:'still', camera:'Hasselblad 500C', lens:'80mm', location:'Studio', date:'2022-05', tags:['studio','object'], r:0.8, desc:'A single object lit from one side, shot on medium-format film.' },
+      { id:10, title:'Quarry, Noon',       album:'still', camera:'Hasselblad 500C', lens:'80mm', location:'Carrara, IT', date:'2022-06', tags:['stone','minimal'], r:1.36, desc:'Marble cut into hard planes under a vertical midday sun.' },
+      { id:11, title:'Two Pears',          album:'still', camera:'Mamiya RZ67', lens:'110mm', location:'Studio', date:'2021-10', tags:['studio','food'], r:1.24, desc:'Window light and a grey card; nothing else in the frame.' },
+      { id:12, title:'Folded Cloth',       album:'still', camera:'Mamiya RZ67', lens:'110mm', location:'Studio', date:'2021-10', tags:['studio','texture'], r:1.5, desc:'Linen folded and raked with a single soft source.' },
+      { id:13, title:'Ridgeline',          album:'mount', camera:'Nikon Z8', lens:'70-200mm', location:'Dolomites, IT', date:'2025-08', tags:['alpine','dawn'], r:1.5, desc:'First sun hitting the top of the ridge while the valley stays in shadow.' },
+      { id:14, title:'Snowfield',          album:'mount', camera:'Nikon Z8', lens:'24-70mm', location:'Chamonix, FR', date:'2025-01', tags:['snow','minimal'], r:1.58, desc:'A clean field of wind-packed snow with a single set of tracks.' },
+      { id:15, title:'Pine Fog',           album:'mount', camera:'Leica Q2', lens:'28mm', location:'Black Forest, DE', date:'2025-11', tags:['forest','fog'], r:0.78, desc:'Dense fog reducing a stand of pines to grey silhouettes.' },
+      { id:16, title:'Summit Cairn',       album:'mount', camera:'Nikon Z8', lens:'24-70mm', location:'Dolomites, IT', date:'2025-08', tags:['alpine','stone'], r:1.3, desc:'A stacked-stone marker against thin high-altitude cloud.' },
+    ].map((p, i) => ({ ...p, grad: g[i % g.length] }));
+  }
+
+  componentDidMount() {
+    this._setW = () => this.setState({ width: window.innerWidth });
+    this._setW();
+    window.addEventListener('resize', this._setW);
+    try {
+      this._mql = window.matchMedia('(prefers-color-scheme: dark)');
+      this.setState({ dark: this._mql.matches });
+      this._onScheme = (e) => { if (!this.manualTheme) this.setState({ dark: e.matches }); };
+      this._mql.addEventListener ? this._mql.addEventListener('change', this._onScheme) : this._mql.addListener(this._onScheme);
+    } catch (e) {}
+    this._onKey = (e) => {
+      if (!this.state.viewer) return;
+      if (e.key === 'ArrowRight') this.stepPhoto(1);
+      else if (e.key === 'ArrowLeft') this.stepPhoto(-1);
+      else if (e.key === 'Escape') this.closeViewer();
+    };
+    window.addEventListener('keydown', this._onKey);
+  }
+  componentWillUnmount() {
+    window.removeEventListener('resize', this._setW);
+    window.removeEventListener('keydown', this._onKey);
+    try { this._mql.removeEventListener ? this._mql.removeEventListener('change', this._onScheme) : this._mql.removeListener(this._onScheme); } catch (e) {}
+  }
+
+  goHome = () => this.setState({ route: 'home' });
+  goAlbums = () => this.setState({ route: 'albums' });
+  openAlbum = (id) => this.setState({ route: 'album', albumId: id });
+  openSearch = () => this.setState({ route: 'search' });
+  onQuery = (e) => this.setState({ query: e.target.value });
+  toggleTheme = () => { this.manualTheme = true; this.setState(s => ({ dark: !s.dark })); };
+  toggleFilter = (kind, val) => this.setState(s => {
+    const cur = s.filters[kind];
+    const next = cur.includes(val) ? cur.filter(x => x !== val) : cur.concat(val);
+    return { filters: { ...s.filters, [kind]: next } };
+  });
+  openPhoto = (list, i) => this.setState({ viewer: { list, index: i } });
+  closeViewer = () => this.setState({ viewer: null });
+  stepPhoto = (d) => this.setState(s => {
+    if (!s.viewer) return null;
+    const n = (s.viewer.index + d + s.viewer.list.length) % s.viewer.list.length;
+    return { viewer: { ...s.viewer, index: n } };
+  });
+
+  short(loc) { return loc.split(',')[0].trim(); }
+  fmt(ym) { const a = ym.split('-'); return this.monthsShort[+a[1]-1] + ' ' + a[0]; }
+  label(ym) { const a = ym.split('-'); return this.monthsFull[+a[1]-1] + ' ' + a[0]; }
+
+  decorate(list) {
+    const dec = [];
+    list.forEach((p, i) => dec.push({ ...p, meta: p.camera + ' · ' + this.short(p.location), open: () => this.openPhoto(dec, i) }));
+    return dec;
+  }
+  distribute(list, n) {
+    const cols = Array.from({ length: n }, () => ({ items: [], w: 0 }));
+    list.forEach(p => {
+      let m = 0;
+      for (let j = 1; j < n; j++) if (cols[j].w < cols[m].w) m = j;
+      cols[m].items.push(p);
+      cols[m].w += 1 / (p.r || 1);
+    });
+    return cols;
+  }
+  match(p) {
+    const f = this.state.filters;
+    const q = this.state.query.trim().toLowerCase();
+    if (q) {
+      const hay = (p.title + ' ' + p.desc + ' ' + p.camera + ' ' + p.location + ' ' + p.tags.join(' ')).toLowerCase();
+      if (!hay.includes(q)) return false;
+    }
+    if (f.tags.length && !p.tags.some(t => f.tags.includes(t))) return false;
+    if (f.camera.length && !f.camera.includes(p.camera)) return false;
+    if (f.location.length && !f.location.includes(this.short(p.location))) return false;
+    if (f.year.length && !f.year.includes(p.date.split('-')[0])) return false;
+    return true;
+  }
+
+  renderVals() {
+    const s = this.state;
+    const dark = s.dark;
+    const isDesktop = s.width >= 880;
+    const P = dark
+      ? { bg:'#17140f', surface:'#221e17', ink:'#ece6d9', muted:'rgba(236,230,217,.55)', faint:'rgba(236,230,217,.06)', line:'rgba(236,230,217,.14)', chip:'rgba(236,230,217,.09)' }
+      : { bg:'#f5f2ea', surface:'#ffffff', ink:'#241f18', muted:'rgba(36,31,24,.5)', faint:'rgba(36,31,24,.05)', line:'rgba(36,31,24,.12)', chip:'rgba(36,31,24,.06)' };
+
+    const rootStyle = { '--bg':P.bg, '--surface':P.surface, '--ink':P.ink, '--muted':P.muted, '--line':P.line, '--chip':P.chip,
+      minHeight:'100vh', background:P.bg, color:P.ink, fontFamily:'system-ui,-apple-system,sans-serif', transition:'background .3s ease, color .3s ease' };
+
+    const topbarStyle = { position:'sticky', top:0, zIndex:20, display:'flex', alignItems:'center', justifyContent:'space-between',
+      padding: isDesktop ? '0 40px' : '0 20px', height: isDesktop ? '72px' : '58px', background:P.bg, borderBottom:'1px solid '+P.line };
+    const wide = s.width >= 1300;
+    const contentWrapStyle = { width:'100%', maxWidth: wide ? '1500px' : isDesktop ? '1180px' : '640px', margin:'0 auto',
+      padding: isDesktop ? '44px 40px 130px' : '24px 20px 110px' };
+
+    const navStyle = (active) => ({ fontFamily:'system-ui', fontSize:'13px', cursor:'pointer', paddingBottom:'4px',
+      borderBottom: '1.5px solid ' + (active ? P.ink : 'transparent'), color:P.ink });
+    const themeBtnStyle = { font:'400 12px system-ui', cursor:'pointer', background:'transparent', border:0, color:P.ink, padding:0 };
+
+    const albumsList = this.albums.map(a => {
+      const ph = this.photos.filter(p => p.album === a.id);
+      return { ...a, count: ph.length, countLabel: ph.length + ' photos', cover: (ph[0] || {}).grad,
+        stripStyle: { flex:'none', width: isDesktop ? '210px' : '150px', cursor:'pointer' },
+        open: () => this.openAlbum(a.id) };
+    });
+    const albumsGridStyle = { display:'grid', gridTemplateColumns:'repeat(' + (isDesktop ? 3 : 2) + ',1fr)', gap: isDesktop ? '28px' : '16px' };
+
+    // active list per route
+    const searchResults = this.photos.filter(p => this.match(p));
+    let baseList = [];
+    if (s.route === 'home') baseList = this.photos;
+    else if (s.route === 'album') baseList = this.photos.filter(p => p.album === s.albumId);
+    else if (s.route === 'search') baseList = searchResults;
+    const activeList = this.decorate(baseList);
+    const colCount = wide ? 4 : isDesktop ? 3 : 2;
+    const columns = this.distribute(activeList, colCount);
+
+    const currentAlbum = (() => {
+      const a = albumsList.find(x => x.id === s.albumId);
+      return a || { name:'', desc:'', countLabel:'' };
+    })();
+
+    // facets
+    const uniq = (arr) => Array.from(new Set(arr));
+    const facetDefs = [
+      { kind:'tags',     label:'Tag',    vals: uniq([].concat.apply([], this.photos.map(p => p.tags))).sort() },
+      { kind:'camera',   label:'Camera', vals: uniq(this.photos.map(p => p.camera)).sort() },
+      { kind:'location', label:'Place',  vals: uniq(this.photos.map(p => this.short(p.location))).sort() },
+      { kind:'year',     label:'Year',   vals: uniq(this.photos.map(p => p.date.split('-')[0])).sort().reverse() },
+    ];
+    const chipBase = { font:"400 11px 'IBM Plex Mono',monospace", padding:'6px 11px', borderRadius:'20px', cursor:'pointer' };
+    const facetGroups = facetDefs.map(fd => ({
+      label: fd.label,
+      options: fd.vals.map(v => {
+        const active = s.filters[fd.kind].includes(v);
+        return { val: v, toggle: () => this.toggleFilter(fd.kind, v),
+          chipStyle: active
+            ? { ...chipBase, background:P.ink, color:P.bg, border:'1px solid '+P.ink }
+            : { ...chipBase, background:'transparent', color:P.ink, border:'1px solid '+P.line } };
+      }),
+    }));
+    const resultLabel = searchResults.length + (searchResults.length === 1 ? ' result' : ' results');
+    const emptyResults = s.route === 'search' && searchResults.length === 0;
+
+    // photo page
+    let viewer = null;
+    if (s.viewer) {
+      const cur = s.viewer.list[s.viewer.index];
+      const al = this.albums.find(a => a.id === cur.album) || { name:'' };
+      const backLabel = s.route === 'album' ? ((this.albums.find(a => a.id === s.albumId) || {}).name || 'Portfolio')
+        : s.route === 'search' ? 'Search' : 'All photographs';
+      viewer = {
+        title: cur.title, desc: cur.desc, tags: cur.tags, location: cur.location,
+        dateFmt: this.fmt(cur.date), albumName: al.name, backLabel: backLabel,
+        camLens: cur.camera + (cur.lens ? ' · ' + cur.lens : ''),
+        counter: (s.viewer.index + 1) + ' / ' + s.viewer.list.length,
+        close: this.closeViewer, next: () => this.stepPhoto(1), prev: () => this.stepPhoto(-1),
+        imgStyle: { aspectRatio: String(cur.r), background: cur.grad,
+          borderRadius: isDesktop ? '3px' : '0',
+          height: isDesktop ? 'min(82vh,100%)' : 'auto', maxHeight: isDesktop ? '82vh' : '56vh',
+          width: isDesktop ? 'auto' : '100%', maxWidth: '100%' },
+      };
+    }
+    const photoPageStyle = { minHeight:'100vh', height: isDesktop ? '100vh' : 'auto', background:P.bg, color:P.ink,
+      display:'flex', flexDirection: isDesktop ? 'row' : 'column', animation:'vfade .28s ease',
+      overflowY: isDesktop ? 'hidden' : 'visible' };
+    const viewerImgWrapStyle = { position:'relative', flex: isDesktop ? '1.7 1 0%' : 'none',
+      display:'flex', alignItems:'center', justifyContent:'center', background: dark ? '#0c0a06' : '#e7e3d9',
+      padding: isDesktop ? '52px' : '0', minHeight: isDesktop ? 'auto' : '48vh' };
+    const viewerPanelStyle = { flex: isDesktop ? '1 1 0%' : 'none', padding: isDesktop ? '56px 52px' : '26px 22px 56px',
+      overflowY:'auto', maxWidth: isDesktop ? '460px' : 'none', display:'flex', flexDirection:'column',
+      justifyContent:'flex-start', animation:'vrise .35s ease both' };
+    const roundBtn = { borderRadius:'50%', border:'1px solid '+P.line, background:P.surface, color:P.ink, cursor:'pointer',
+      display:'flex', alignItems:'center', justifyContent:'center' };
+    const arrow = { ...roundBtn, position:'absolute', top:'50%', transform:'translateY(-50%)', width:'46px', height:'46px', fontSize:'18px', opacity:.94 };
+    const viewerPrevStyle = { ...arrow, left:'16px' };
+    const viewerNextStyle = { ...arrow, right:'16px' };
+    const metaKeyStyle = { flex:'none', width:'88px', font:"400 10px 'IBM Plex Mono',monospace", textTransform:'uppercase', letterSpacing:'.1em', color:P.muted, paddingTop:'2px' };
+    const metaValStyle = { font:'400 14px/1.4 system-ui', color:P.ink };
+
+    return {
+      photographer: (this.props && this.props.photographer) || 'Elena Voss',
+      rootStyle, topbarStyle, contentWrapStyle,
+      isDesktop, isMobile: !isDesktop,
+      goHome: this.goHome, goAlbums: this.goAlbums, openSearch: this.openSearch, toggleTheme: this.toggleTheme,
+      navWorkStyle: navStyle(s.route === 'home'), navAlbumsStyle: navStyle(s.route === 'albums' || s.route === 'album'), navSearchStyle: navStyle(s.route === 'search'),
+      themeBtnStyle, themeLabel: dark ? '◑ Light' : '◐ Dark', themeGlyph: dark ? '◑' : '◐',
+      showHome: s.route === 'home', showAlbums: s.route === 'albums', showAlbum: s.route === 'album', showSearch: s.route === 'search',
+      showGrid: s.route === 'home' || s.route === 'album' || s.route === 'search',
+      isPhoto: !!viewer, notPhoto: !viewer,
+      homeStat: this.photos.length + ' images · ' + this.albums.length + ' portfolios',
+      albumsList, albumsGridStyle,
+      columns, currentAlbum,
+      query: s.query, onQuery: this.onQuery, facetGroups, resultLabel, emptyResults,
+      viewer, photoPageStyle, viewerImgWrapStyle, viewerPanelStyle, viewerPrevStyle, viewerNextStyle,
+      metaKeyStyle, metaValStyle,
+    };
+  }
+}
+</script>
+</body>
+</html>
