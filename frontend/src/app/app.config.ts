@@ -1,16 +1,22 @@
+import { provideHttpClient, withFetch } from '@angular/common/http'
 import {
   type ApplicationConfig,
+  inject,
   isDevMode,
+  provideAppInitializer,
   provideBrowserGlobalErrorListeners,
 } from '@angular/core'
 import { provideClientHydration, withEventReplay } from '@angular/platform-browser'
 import { provideRouter, withComponentInputBinding, withInMemoryScrolling } from '@angular/router'
 import { provideServiceWorker } from '@angular/service-worker'
 import { routes } from './app.routes'
+import { GalleryService } from './services/gallery.service'
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
+    provideHttpClient(withFetch()),
+    provideAppInitializer(() => inject(GalleryService).load()),
     provideRouter(
       routes,
       withComponentInputBinding(),

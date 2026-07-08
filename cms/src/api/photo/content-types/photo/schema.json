@@ -1,0 +1,66 @@
+{
+  "kind": "collectionType",
+  "collectionName": "photos",
+  "info": {
+    "singularName": "photo",
+    "pluralName": "photos",
+    "displayName": "Photo",
+    "description": "A single photograph"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "camera": {
+      "type": "string"
+    },
+    "lens": {
+      "type": "string"
+    },
+    "location": {
+      "type": "string"
+    },
+    "date": {
+      "type": "string",
+      "description": "YYYY-MM"
+    },
+    "tags": {
+      "type": "json"
+    },
+    "ratio": {
+      "type": "decimal",
+      "default": 1.5,
+      "description": "width / height"
+    },
+    "description": {
+      "type": "text"
+    },
+    "grad": {
+      "type": "string",
+      "description": "CSS gradient placeholder"
+    },
+    "src": {
+      "type": "string"
+    },
+    "blurhash": {
+      "type": "string"
+    },
+    "image": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": ["images"]
+    },
+    "album": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::album.album",
+      "inversedBy": "photos"
+    }
+  }
+}

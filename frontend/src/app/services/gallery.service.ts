@@ -8,22 +8,39 @@ import type { PhotoView } from '../models/photo-view'
 import type { SearchFilters } from '../models/search-filters'
 import { shortLocation } from '../util/short-location'
 import { toView } from '../util/to-view'
+import { StrapiService } from './strapi.service'
 
 const GALLERY_KEY = makeStateKey<GalleryData>('gallery')
+
+const SEED: GalleryData = {
+  photos: PHOTOS,
+  albums: ALBUMS,
+  photographer: PHOTOGRAPHER,
+}
 
 @Injectable({ providedIn: 'root' })
 export class GalleryService {
   private readonly state = inject(TransferState)
-  private readonly data: GalleryData
+  private readonly strapi = inject(StrapiService)
+  private data: GalleryData = SEED
 
-  constructor() {
-    // On the server, seed TransferState; on the client, reuse it so the
-    // dataset isn't rebuilt/refetched after hydration.
-    this.data = this.state.get(GALLERY_KEY, {
-      photos: PHOTOS,
-      albums: ALBUMS,
-      photographer: PHOTOGRAPHER,
-    })
+  /**
+   * Populate the dataset before the app renders. Runs as an app initializer.
+   * The server fetches from Strapi and hands the result to the client via
+   * TransferState, so the client reuses it instead of refetching. If Strapi is
+   * unreachable, the bundled seed keeps the app rendering.
+   */
+  async load(): Promise<void> {
+    const cached = this.state.get<GalleryData | null>(GALLERY_KEY, null)
+    if (cached) {
+      this.data = cached
+      return
+    }
+    try {
+      this.data = await this.strapi.fetchGallery()
+    } catch {
+      this.data = SEED
+    }
     this.state.set(GALLERY_KEY, this.data)
   }
 

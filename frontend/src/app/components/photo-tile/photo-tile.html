@@ -4,7 +4,21 @@
   [attr.aria-label]="photo().title + ' — ' + photo().meta"
   class="group relative block overflow-hidden rounded-tile animate-rise focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"
 >
-  <div class="w-full" [style.aspect-ratio]="photo().ratio" [style.background]="photo().grad"></div>
+  <div
+    class="relative w-full overflow-hidden"
+    [style.aspect-ratio]="photo().ratio"
+    [style.background]="photo().grad"
+  >
+    @if (photo().src; as src) {
+      <img
+        [src]="src"
+        alt=""
+        loading="lazy"
+        decoding="async"
+        class="absolute inset-0 h-full w-full object-cover transition-transform duration-[400ms] ease-out group-hover:scale-[1.03]"
+      />
+    }
+  </div>
   <div
     class="pointer-events-none absolute inset-x-0 bottom-0 px-[15px] pt-[34px] pb-[13px] opacity-0 transition-opacity duration-[250ms] ease-out group-hover:opacity-100 group-focus-visible:opacity-100 bg-[linear-gradient(to_top,rgba(18,14,9,.74),rgba(18,14,9,0))]"
   >

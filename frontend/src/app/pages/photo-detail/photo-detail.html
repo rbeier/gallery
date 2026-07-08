@@ -7,12 +7,21 @@
       class="relative flex min-h-[48vh] flex-none items-center justify-center bg-viewer-mat d:min-h-0 d:flex-[1.7] d:p-[52px]"
     >
       <div
-        class="w-full max-w-full d:h-[min(82vh,100%)] d:w-auto"
+        class="relative w-full max-w-full overflow-hidden d:h-[min(82vh,100%)] d:w-auto"
         [style.aspect-ratio]="photo.ratio"
         [style.background]="photo.grad"
         [style.max-height.vh]="56"
         [style.border-radius.px]="3"
-      ></div>
+      >
+        @if (photo.src; as src) {
+          <img
+            [src]="src"
+            [alt]="photo.title"
+            decoding="async"
+            class="absolute inset-0 h-full w-full object-cover"
+          />
+        }
+      </div>
       <button
         type="button"
         (click)="step(-1)"
