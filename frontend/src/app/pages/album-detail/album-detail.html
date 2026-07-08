@@ -1,10 +1,7 @@
 <app-content-shell>
   @if (album(); as album) {
     <div class="mb-[clamp(18px,3vw,28px)]">
-      <a routerLink="/albums" class="cursor-pointer font-mono text-[11px] tracking-[.06em] text-muted"
-        >← Portfolios</a
-      >
-      <h1 class="mt-3 font-serif text-[clamp(30px,5.4vw,48px)] font-normal tracking-[-.015em]">
+      <h1 class="font-serif text-[clamp(30px,5.4vw,48px)] font-normal tracking-[-.015em]">
         {{ album.name }}
       </h1>
       <p class="mt-[10px] max-w-[34em] text-[15px] leading-[1.6] text-muted">

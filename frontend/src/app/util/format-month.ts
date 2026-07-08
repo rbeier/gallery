@@ -13,8 +13,9 @@ const MONTHS_SHORT = [
   'Dec',
 ]
 
-/** "2024-09" -> "Sep 2024" */
-export function formatMonth(ym: string): string {
-  const [year, month] = ym.split('-')
-  return `${MONTHS_SHORT[Number(month) - 1]} ${year}`
+/** "2024-09-14" -> "14 Sep 2024"; "2024-09" -> "Sep 2024" */
+export function formatMonth(date: string): string {
+  const [year, month, day] = date.split('-')
+  const label = `${MONTHS_SHORT[Number(month) - 1]} ${year}`
+  return day ? `${Number(day)} ${label}` : label
 }

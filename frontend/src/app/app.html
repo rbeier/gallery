@@ -1,4 +1,8 @@
-@if (showChrome()) {
-  <app-top-bar />
-}
-<router-outlet />
+<div class="d:flex d:min-h-screen">
+  @if (showChrome()) {
+    <app-sidebar />
+  }
+  <main class="min-w-0 flex-1">
+    <router-outlet />
+  </main>
+</div>

@@ -6,6 +6,7 @@ import type { Album } from '../models/album'
 import type { AlbumId } from '../models/album-id'
 import type { GalleryData } from '../models/gallery-data'
 import type { Photo } from '../models/photo'
+import { gradientFor } from '../util/gradient'
 
 /** Strapi v5 REST list envelope. Attributes are flattened onto each entry. */
 interface StrapiList<T> {
@@ -40,14 +41,11 @@ interface StrapiPhoto {
   title: string
   camera: string | null
   lens: string | null
-  location: string | null
+  location: { address?: string } | null
   date: string | null
-  tags: { value: string }[] | null
+  tags: { name: string }[] | null
   ratio: number | null
   description: string | null
-  grad: string | null
-  src: string | null
-  blurhash: string | null
   image: StrapiMedia | null
   album: { slug: string } | null
 }
@@ -68,7 +66,7 @@ export class StrapiService {
         this.http.get<StrapiList<StrapiPhoto>>(`${this.base}/api/photos`, {
           params: {
             'populate[album][fields][0]': 'slug',
-            'populate[tags][fields][0]': 'value',
+            'populate[tags][fields][0]': 'name',
             'populate[image][fields][0]': 'url',
             'populate[image][fields][1]': 'formats',
             'populate[image][fields][2]': 'width',
@@ -104,14 +102,13 @@ export class StrapiService {
       album: (p.album?.slug ?? '') as AlbumId,
       camera: p.camera ?? '',
       lens: p.lens ?? '',
-      location: p.location ?? '',
+      location: p.location?.address ?? '',
       date: p.date ?? '',
-      tags: (p.tags ?? []).map((t) => t.value),
+      tags: (p.tags ?? []).map((t) => t.name),
       ratio: p.ratio ?? 1.5,
       description: p.description ?? '',
-      grad: p.grad ?? '',
+      grad: gradientFor(p.id),
       src: this.imageUrl(p.image),
-      blurhash: p.blurhash ?? undefined,
     }
   }
 

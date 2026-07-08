@@ -2,11 +2,11 @@ import { Component, computed, inject, signal } from '@angular/core'
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop'
 import { NavigationEnd, Router, RouterOutlet } from '@angular/router'
 import { filter } from 'rxjs'
-import { TopBar } from './components/top-bar/top-bar'
+import { Sidebar } from './components/sidebar/sidebar'
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, TopBar],
+  imports: [RouterOutlet, Sidebar],
   templateUrl: './app.html',
   styleUrl: './app.css',
 })
@@ -14,7 +14,8 @@ export class App {
   private readonly router = inject(Router)
   private readonly url = signal(this.router.url)
 
-  // The photo detail route is a full-bleed page — the top bar recedes there.
+  // The photo detail route is a full-bleed viewer with its own panel — the
+  // global sidebar recedes there.
   protected readonly showChrome = computed(() => !this.url().startsWith('/photo'))
 
   constructor() {

@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import type { Core } from '@strapi/strapi';
 import { ALBUMS, PHOTOGRAPHER } from './seed-data';
-import { GRADIENTS, generateMeta } from './seed-generate';
+import { generateMeta, locationValue } from './seed-generate';
 
 /** Read actions the public role needs so the Angular frontend can fetch data. */
 const PUBLIC_ACTIONS = [
@@ -10,6 +10,8 @@ const PUBLIC_ACTIONS = [
   'api::album.album.findOne',
   'api::photo.photo.find',
   'api::photo.photo.findOne',
+  'api::tag.tag.find',
+  'api::tag.tag.findOne',
   'api::global.global.find',
 ];
 
@@ -82,22 +84,32 @@ async function seedContent(strapi: Core.Strapi) {
   }
   const albumSlugs = ALBUMS.map((a) => a.slug);
 
+  // Generate all metadata up front so tags can be de-duplicated into their own
+  // collection before photos reference them.
+  const metas = files.map((_, i) => generateMeta(i));
+
+  const tagIdByName = new Map<string, string>();
+  for (const name of new Set(metas.flatMap((m) => m.tags))) {
+    const tag = await strapi.documents('api::tag.tag').create({ data: { name } });
+    tagIdByName.set(name, tag.documentId);
+  }
+
   // Default each album cover to the first image assigned to it; editors can
   // change the cover later in the admin.
   const coverBySlug = new Map<string, number>();
 
   for (let i = 0; i < files.length; i++) {
     const media = await uploadImage(strapi, path.join(imageDir!, files[i]));
-    const meta = generateMeta(i);
+    const meta = metas[i];
     const ratio = media.width && media.height ? media.width / media.height : 1.5;
     const slug = albumSlugs[i % albumSlugs.length];
     if (!coverBySlug.has(slug)) coverBySlug.set(slug, media.id);
     await strapi.documents('api::photo.photo').create({
       data: {
         ...meta,
-        tags: meta.tags.map((value) => ({ value })),
+        location: locationValue(meta.location),
+        tags: meta.tags.map((name) => tagIdByName.get(name)!),
         ratio: Math.round(ratio * 100) / 100,
-        grad: GRADIENTS[i % GRADIENTS.length],
         image: media.id,
         album: albumIdBySlug.get(slug),
       },
@@ -114,11 +126,49 @@ async function seedContent(strapi: Core.Strapi) {
   strapi.log.info(`[seed] Done. Uploaded ${files.length} images.`);
 }
 
+/**
+ * Give the Photo edit view a tidy layout instead of the default cramped one
+ * (e.g. the description textarea squeezed next to a number field). Rows must
+ * each sum to <= 12 columns. Idempotent — re-applied on every boot.
+ */
+async function tidyPhotoEditView(strapi: Core.Strapi) {
+  const key = 'plugin_content_manager_configuration_content_types::api::photo.photo';
+  const store = strapi.db.query('strapi::core-store');
+  const entry = await store.findOne({ where: { key } });
+  if (!entry) return;
+
+  const config = JSON.parse(entry.value);
+  config.layouts.edit = [
+    [{ name: 'title', size: 12 }],
+    [{ name: 'description', size: 12 }],
+    [
+      { name: 'camera', size: 6 },
+      { name: 'lens', size: 6 },
+    ],
+    [
+      { name: 'date', size: 6 },
+      { name: 'ratio', size: 6 },
+    ],
+    [{ name: 'location', size: 12 }],
+    [{ name: 'image', size: 12 }],
+    [
+      { name: 'album', size: 6 },
+      { name: 'tags', size: 6 },
+    ],
+  ];
+  await store.update({ where: { key }, data: { value: JSON.stringify(config) } });
+}
+
 export default {
   register(/* { strapi }: { strapi: Core.Strapi } */) {},
 
   async bootstrap({ strapi }: { strapi: Core.Strapi }) {
     await grantPublicPermissions(strapi);
     await seedContent(strapi);
+    try {
+      await tidyPhotoEditView(strapi);
+    } catch (err) {
+      strapi.log.warn(`[layout] Could not set Photo edit view: ${err}`);
+    }
   },
 };

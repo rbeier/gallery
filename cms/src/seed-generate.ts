@@ -31,6 +31,27 @@ const PLACES = [
   'Tarifa, ES', 'Málaga, ES', 'Sierra Nevada, ES', 'Córdoba, ES', 'Setenil, ES',
 ];
 
+const PLACE_COORDS: Record<string, { lat: number; lng: number }> = {
+  'Andalusia, ES': { lat: 37.5443, lng: -4.7278 },
+  'Ronda, ES': { lat: 36.746, lng: -5.1611 },
+  'Seville, ES': { lat: 37.3891, lng: -5.9845 },
+  'Grazalema, ES': { lat: 36.7597, lng: -5.3656 },
+  'Cádiz, ES': { lat: 36.5271, lng: -6.2886 },
+  'Tarifa, ES': { lat: 36.0143, lng: -5.6044 },
+  'Málaga, ES': { lat: 36.7213, lng: -4.4213 },
+  'Sierra Nevada, ES': { lat: 37.0954, lng: -3.3986 },
+  'Córdoba, ES': { lat: 37.8882, lng: -4.7794 },
+  'Setenil, ES': { lat: 36.8641, lng: -5.1806 },
+};
+
+/** Build the JSON value the google-maps location-picker custom field stores. */
+export function locationValue(address: string) {
+  return {
+    address,
+    coordinates: PLACE_COORDS[address] ?? { lat: 0, lng: 0 },
+  };
+}
+
 const CAMERAS = ['Pixel 7 Pro', 'Leica Q2', 'Fuji X100V', 'Sony A7 IV', 'Ricoh GR III'];
 const LENSES = ['24mm', '28mm', '35mm', '50mm', '18mm'];
 
@@ -78,25 +99,14 @@ export function generateMeta(index: number): GeneratedMeta {
   const title = `${pick(MODS, r)} ${pick(NOUNS, r)}`;
   const year = 2023;
   const month = String(7 + Math.floor(r() * 2)).padStart(2, '0'); // Jul/Aug 2023
+  const day = String(1 + Math.floor(r() * 28)).padStart(2, '0');
   return {
     title,
     camera: pick(CAMERAS, r),
     lens: pick(LENSES, r),
     location: pick(PLACES, r),
-    date: `${year}-${month}`,
+    date: `${year}-${month}-${day}`,
     tags: pickN(TAGS, 2 + Math.floor(r() * 2), r),
     description: pick(SENTENCES, r),
   };
 }
-
-/** Gradient placeholder shown behind the image while it loads. */
-export const GRADIENTS = [
-  'linear-gradient(155deg,#c9bda6,#a89574)',
-  'linear-gradient(155deg,#bcc0bd,#969e98)',
-  'linear-gradient(155deg,#d3caba,#b3a68f)',
-  'linear-gradient(155deg,#c1b9a9,#9c8f78)',
-  'linear-gradient(155deg,#c7cac6,#9ba49d)',
-  'linear-gradient(155deg,#cbc3b4,#a99d88)',
-  'linear-gradient(155deg,#b7bcc0,#8f9498)',
-  'linear-gradient(155deg,#d6ccbb,#b8ab92)',
-];

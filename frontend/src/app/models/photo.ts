@@ -13,8 +13,8 @@ export interface Photo {
   /** width / height — drives masonry balance + detail aspect */
   ratio: number
   description: string
-  /** CSS gradient placeholder in the prototype; real image URL in production */
+  /** Derived CSS gradient placeholder shown behind the image (see util/gradient). */
   grad: string
+  /** Resolved image URL from the CMS media, if any. */
   src?: string
-  blurhash?: string
 }

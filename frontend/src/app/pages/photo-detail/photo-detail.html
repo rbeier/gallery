@@ -1,10 +1,10 @@
 @if (photo(); as photo) {
   <div
-    class="flex min-h-screen animate-fade flex-col bg-bg text-ink d:h-screen d:flex-row d:overflow-hidden"
+    class="flex min-h-screen animate-fade flex-col bg-bg text-ink d:h-screen d:flex-row-reverse d:overflow-hidden"
   >
     <!-- Image pane -->
     <div
-      class="relative flex min-h-[48vh] flex-none items-center justify-center bg-viewer-mat d:min-h-0 d:flex-[1.7] d:p-[52px]"
+      class="relative flex min-h-[48vh] flex-none items-center justify-center bg-viewer-mat d:min-h-0 d:min-w-0 d:flex-1 d:p-[52px]"
     >
       <div
         class="relative w-full max-w-full overflow-hidden d:h-[min(82vh,100%)] d:w-auto"
@@ -42,7 +42,7 @@
 
     <!-- Caption panel -->
     <div
-      class="flex flex-none animate-rise flex-col overflow-y-auto px-[22px] pt-[26px] pb-[56px] d:max-w-[460px] d:flex-1 d:p-[52px]"
+      class="flex flex-none animate-rise flex-col overflow-y-auto px-[22px] pt-[26px] pb-[56px] d:w-[320px] d:flex-none d:p-[52px]"
     >
       <button
         type="button"

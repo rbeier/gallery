@@ -1,30 +1,12 @@
 import type { Album } from '../models/album'
 import type { Photo } from '../models/photo'
+import { gradientFor } from '../util/gradient'
 
 export const ALBUMS: Album[] = [
   { id: 'coast', name: 'Coastlines', description: 'Water, salt, and the shifting edges of land.' },
   { id: 'city', name: 'Cities', description: 'Concrete, glass, and the small hours.' },
   { id: 'still', name: 'Still Life', description: 'Objects, arranged and left alone.' },
   { id: 'mount', name: 'Mountains', description: 'Altitude, weather, and a lot of quiet.' },
-]
-
-const GRADIENTS = [
-  'linear-gradient(155deg,#c9bda6,#a89574)',
-  'linear-gradient(155deg,#bcc0bd,#969e98)',
-  'linear-gradient(155deg,#d3caba,#b3a68f)',
-  'linear-gradient(155deg,#c1b9a9,#9c8f78)',
-  'linear-gradient(155deg,#c7cac6,#9ba49d)',
-  'linear-gradient(155deg,#cbc3b4,#a99d88)',
-  'linear-gradient(155deg,#b7bcc0,#8f9498)',
-  'linear-gradient(155deg,#d6ccbb,#b8ab92)',
-  'linear-gradient(155deg,#a9b0ac,#7e8681)',
-  'linear-gradient(155deg,#ccc0ad,#a8987d)',
-  'linear-gradient(155deg,#c2c6c9,#989ea1)',
-  'linear-gradient(155deg,#d0c7b6,#aea083)',
-  'linear-gradient(155deg,#b5b0a4,#8a8478)',
-  'linear-gradient(155deg,#c8ccc9,#9ca4a0)',
-  'linear-gradient(155deg,#cebfa6,#a89170)',
-  'linear-gradient(155deg,#bfb8ab,#948b7b)',
 ]
 
 const RAW: Omit<Photo, 'grad'>[] = [
@@ -223,6 +205,6 @@ const RAW: Omit<Photo, 'grad'>[] = [
   },
 ]
 
-export const PHOTOS: Photo[] = RAW.map((p, i) => ({ ...p, grad: GRADIENTS[i % GRADIENTS.length] }))
+export const PHOTOS: Photo[] = RAW.map((p) => ({ ...p, grad: gradientFor(p.id) }))
 
 export const PHOTOGRAPHER = 'Robin Beier'
