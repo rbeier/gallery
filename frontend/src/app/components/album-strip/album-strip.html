@@ -4,7 +4,20 @@
       [routerLink]="['/albums', album.id]"
       class="w-[150px] flex-none d:w-[210px] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"
     >
-      <div class="h-[clamp(96px,12vw,130px)] w-full rounded-[10px]" [style.background]="album.cover"></div>
+      <div
+        class="relative h-[clamp(96px,12vw,130px)] w-full overflow-hidden rounded-[10px]"
+        [style.background]="album.grad"
+      >
+        @if (album.cover; as cover) {
+          <img
+            [src]="cover"
+            alt=""
+            loading="lazy"
+            decoding="async"
+            class="absolute inset-0 h-full w-full object-cover"
+          />
+        }
+      </div>
       <div class="mt-[9px] font-serif text-[15px] font-medium">{{ album.name }}</div>
       <div class="mt-[2px] text-[11px] text-muted">{{ album.count }} photos</div>
     </a>

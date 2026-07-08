@@ -82,10 +82,16 @@ async function seedContent(strapi: Core.Strapi) {
   }
   const albumSlugs = ALBUMS.map((a) => a.slug);
 
+  // Default each album cover to the first image assigned to it; editors can
+  // change the cover later in the admin.
+  const coverBySlug = new Map<string, number>();
+
   for (let i = 0; i < files.length; i++) {
     const media = await uploadImage(strapi, path.join(imageDir!, files[i]));
     const meta = generateMeta(i);
     const ratio = media.width && media.height ? media.width / media.height : 1.5;
+    const slug = albumSlugs[i % albumSlugs.length];
+    if (!coverBySlug.has(slug)) coverBySlug.set(slug, media.id);
     await strapi.documents('api::photo.photo').create({
       data: {
         ...meta,
@@ -93,8 +99,15 @@ async function seedContent(strapi: Core.Strapi) {
         ratio: Math.round(ratio * 100) / 100,
         grad: GRADIENTS[i % GRADIENTS.length],
         image: media.id,
-        album: albumIdBySlug.get(albumSlugs[i % albumSlugs.length]),
+        album: albumIdBySlug.get(slug),
       },
+    });
+  }
+
+  for (const [slug, coverId] of coverBySlug) {
+    await strapi.documents('api::album.album').update({
+      documentId: albumIdBySlug.get(slug)!,
+      data: { cover: coverId },
     });
   }
 

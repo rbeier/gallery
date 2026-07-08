@@ -21,6 +21,7 @@ interface StrapiAlbum {
   name: string
   description: string | null
   order: number | null
+  cover: StrapiMedia | null
 }
 
 interface StrapiFormat {
@@ -79,7 +80,11 @@ export class StrapiService {
       ),
       firstValueFrom(
         this.http.get<StrapiList<StrapiAlbum>>(`${this.base}/api/albums`, {
-          params: { sort: 'order:asc' },
+          params: {
+            'populate[cover][fields][0]': 'url',
+            'populate[cover][fields][1]': 'formats',
+            sort: 'order:asc',
+          },
         }),
       ),
       firstValueFrom(this.http.get<StrapiSingle<StrapiGlobal>>(`${this.base}/api/global`)),
@@ -87,7 +92,7 @@ export class StrapiService {
 
     return {
       photos: photos.data.map((p) => this.mapPhoto(p)),
-      albums: albums.data.map(mapAlbum),
+      albums: albums.data.map((a) => this.mapAlbum(a)),
       photographer: global.data?.photographer ?? '',
     }
   }
@@ -110,18 +115,19 @@ export class StrapiService {
     }
   }
 
+  private mapAlbum(a: StrapiAlbum): Album {
+    return {
+      id: a.slug as AlbumId,
+      name: a.name,
+      description: a.description ?? '',
+      cover: this.imageUrl(a.cover),
+    }
+  }
+
   /** Absolute URL of the best display format, or undefined when no image. */
   private imageUrl(media: StrapiMedia | null): string | undefined {
     if (!media) return undefined
     const rel = media.formats?.['large']?.url ?? media.formats?.['medium']?.url ?? media.url
     return rel.startsWith('http') ? rel : `${this.base}${rel}`
-  }
-}
-
-function mapAlbum(a: StrapiAlbum): Album {
-  return {
-    id: a.slug as AlbumId,
-    name: a.name,
-    description: a.description ?? '',
   }
 }

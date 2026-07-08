@@ -64,7 +64,12 @@ export class GalleryService {
   albums(): AlbumView[] {
     return this.data.albums.map((a) => {
       const photos = this.data.photos.filter((p) => p.album === a.id)
-      return { ...a, count: photos.length, cover: photos[0]?.grad }
+      return {
+        ...a,
+        count: photos.length,
+        cover: a.cover ?? photos[0]?.src,
+        grad: photos[0]?.grad,
+      }
     })
   }
 

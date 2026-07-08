@@ -453,6 +453,7 @@ export interface ApiAlbumAlbum extends Struct.CollectionTypeSchema {
     draftAndPublish: false;
   };
   attributes: {
+    cover: Schema.Attribute.Media<'images'>;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
