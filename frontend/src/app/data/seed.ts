@@ -1,4 +1,5 @@
-import type { Album, Photo } from '../models/gallery.models'
+import type { Album } from '../models/album'
+import type { Photo } from '../models/photo'
 
 export const ALBUMS: Album[] = [
   { id: 'coast', name: 'Coastlines', description: 'Water, salt, and the shifting edges of land.' },

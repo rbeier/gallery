@@ -1,28 +1,13 @@
 import { Injectable, inject, makeStateKey, TransferState } from '@angular/core'
 import { ALBUMS, PHOTOGRAPHER, PHOTOS } from '../data/seed'
-import type {
-  Album,
-  AlbumId,
-  AlbumView,
-  FacetGroup,
-  Photo,
-  PhotoView,
-} from '../models/gallery.models'
-import { distribute, shortLocation, toView } from '../util/gallery.util'
-
-export interface GalleryData {
-  photos: Photo[]
-  albums: Album[]
-  photographer: string
-}
-
-export interface SearchFilters {
-  q: string
-  tag: string[]
-  camera: string[]
-  place: string[]
-  year: string[]
-}
+import type { AlbumId } from '../models/album-id'
+import type { AlbumView } from '../models/album-view'
+import type { FacetGroup } from '../models/facet-group'
+import type { GalleryData } from '../models/gallery-data'
+import type { PhotoView } from '../models/photo-view'
+import type { SearchFilters } from '../models/search-filters'
+import { shortLocation } from '../util/short-location'
+import { toView } from '../util/to-view'
 
 const GALLERY_KEY = makeStateKey<GalleryData>('gallery')
 
@@ -118,5 +103,3 @@ export class GalleryService {
       .map(toView)
   }
 }
-
-export { distribute }

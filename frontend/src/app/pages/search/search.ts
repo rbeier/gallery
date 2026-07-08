@@ -3,8 +3,9 @@ import { Router, RouterLink } from '@angular/router'
 import { ContentShell } from '../../components/content-shell/content-shell'
 import { FacetGroup } from '../../components/facet-group/facet-group'
 import { PhotoGrid } from '../../components/photo-grid/photo-grid'
-import type { FacetKind } from '../../models/gallery.models'
-import { GalleryService, type SearchFilters } from '../../services/gallery.service'
+import type { FacetKind } from '../../models/facet-kind'
+import type { SearchFilters } from '../../models/search-filters'
+import { GalleryService } from '../../services/gallery.service'
 import { SeoService } from '../../services/seo.service'
 
 const splitParam = (v: string | undefined): string[] => (v ? v.split(',').filter(Boolean) : [])

@@ -1,5 +1,5 @@
 import { Component, input } from '@angular/core'
-import type { AlbumView } from '../../models/gallery.models'
+import type { AlbumView } from '../../models/album-view'
 import { AlbumCard } from '../album-card/album-card'
 
 @Component({

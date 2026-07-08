@@ -1,9 +1,10 @@
 import { Component, computed, effect, inject, input } from '@angular/core'
 import { Router } from '@angular/router'
-import type { AlbumId, PhotoView } from '../../models/gallery.models'
+import type { AlbumId } from '../../models/album-id'
+import type { PhotoView } from '../../models/photo-view'
 import { GalleryService } from '../../services/gallery.service'
 import { SeoService } from '../../services/seo.service'
-import { formatMonth } from '../../util/gallery.util'
+import { formatMonth } from '../../util/format-month'
 
 const asString = (v?: string): string => v ?? ''
 

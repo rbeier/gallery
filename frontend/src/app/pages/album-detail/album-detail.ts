@@ -2,7 +2,7 @@ import { Component, computed, effect, inject, input } from '@angular/core'
 import { RouterLink } from '@angular/router'
 import { ContentShell } from '../../components/content-shell/content-shell'
 import { PhotoGrid } from '../../components/photo-grid/photo-grid'
-import type { AlbumId } from '../../models/gallery.models'
+import type { AlbumId } from '../../models/album-id'
 import { GalleryService } from '../../services/gallery.service'
 import { SeoService } from '../../services/seo.service'
 

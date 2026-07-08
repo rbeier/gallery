@@ -1,6 +1,6 @@
 import { Component, input } from '@angular/core'
 import { RouterLink } from '@angular/router'
-import type { AlbumView } from '../../models/gallery.models'
+import type { AlbumView } from '../../models/album-view'
 
 @Component({
   selector: 'app-album-card',

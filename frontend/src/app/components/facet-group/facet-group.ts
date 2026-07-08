@@ -1,5 +1,5 @@
 import { Component, input, output } from '@angular/core'
-import type { FacetGroup as FacetGroupModel } from '../../models/gallery.models'
+import type { FacetGroup as FacetGroupModel } from '../../models/facet-group'
 
 @Component({
   selector: 'app-facet-group',

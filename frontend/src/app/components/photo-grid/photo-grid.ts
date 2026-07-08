@@ -1,8 +1,8 @@
 import { Component, computed, inject, input } from '@angular/core'
 import type { Params } from '@angular/router'
-import type { PhotoView } from '../../models/gallery.models'
+import type { PhotoView } from '../../models/photo-view'
 import { ViewportService } from '../../services/viewport.service'
-import { distribute } from '../../util/gallery.util'
+import { distribute } from '../../util/distribute'
 import { PhotoTile } from '../photo-tile/photo-tile'
 
 @Component({

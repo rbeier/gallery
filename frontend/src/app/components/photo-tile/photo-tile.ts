@@ -1,6 +1,6 @@
 import { Component, input } from '@angular/core'
 import { type Params, RouterLink } from '@angular/router'
-import type { PhotoView } from '../../models/gallery.models'
+import type { PhotoView } from '../../models/photo-view'
 
 @Component({
   selector: 'app-photo-tile',
