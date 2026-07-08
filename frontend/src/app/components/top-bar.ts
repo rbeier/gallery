@@ -1,0 +1,54 @@
+import { Component, inject } from '@angular/core'
+import { RouterLink, RouterLinkActive } from '@angular/router'
+import { PHOTOGRAPHER } from '../data/seed'
+import { ThemeService } from '../services/theme.service'
+import { ViewportService } from '../services/viewport.service'
+
+@Component({
+  selector: 'app-top-bar',
+  imports: [RouterLink, RouterLinkActive],
+  host: {
+    class:
+      'sticky top-0 z-20 flex h-[58px] items-center justify-between border-b border-line bg-bg px-5 d:h-[72px] d:px-10',
+  },
+  template: `
+    <a
+      routerLink="/"
+      class="cursor-pointer font-serif text-[clamp(18px,2vw,21px)] font-medium tracking-[-.01em]"
+      >{{ photographer }}</a
+    >
+
+    @if (viewport.isDesktop()) {
+      <nav class="flex items-center gap-[26px]" aria-label="Primary">
+        <a routerLink="/" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive #work="routerLinkActive" [class.border-ink]="work.isActive" class="cursor-pointer border-b-[1.5px] border-transparent pb-1 text-[13px]">Work</a>
+        <a routerLink="/albums" routerLinkActive #alb="routerLinkActive" [class.border-ink]="alb.isActive" class="cursor-pointer border-b-[1.5px] border-transparent pb-1 text-[13px]">Albums</a>
+        <a routerLink="/search" routerLinkActive #srch="routerLinkActive" [class.border-ink]="srch.isActive" class="cursor-pointer border-b-[1.5px] border-transparent pb-1 text-[13px]">Search</a>
+        <button
+          type="button"
+          (click)="theme.toggle()"
+          class="cursor-pointer border-0 bg-transparent p-0 text-[12px] text-ink"
+        >
+          {{ theme.label() }}
+        </button>
+      </nav>
+    } @else {
+      <div class="flex items-center gap-5">
+        <a routerLink="/search" aria-label="Search" class="cursor-pointer text-[18px] leading-none">⌕</a>
+        <a routerLink="/albums" aria-label="Albums" class="cursor-pointer text-[15px] leading-none">▦</a>
+        <button
+          type="button"
+          (click)="theme.toggle()"
+          [attr.aria-label]="theme.isDark() ? 'Switch to light theme' : 'Switch to dark theme'"
+          class="cursor-pointer border-0 bg-transparent p-0 text-[15px] leading-none text-ink"
+        >
+          {{ theme.glyph() }}
+        </button>
+      </div>
+    }
+  `,
+})
+export class TopBar {
+  protected readonly viewport = inject(ViewportService)
+  protected readonly theme = inject(ThemeService)
+  protected readonly photographer = PHOTOGRAPHER
+}

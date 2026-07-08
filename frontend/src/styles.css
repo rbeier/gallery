@@ -1,1 +1,148 @@
 @import "tailwindcss";
+
+/* Explicitly scan app sources (inline component templates live in .ts files). */
+@source "./app/**/*.{ts,html}";
+
+/* ---------------------------------------------------------------------------
+   Design tokens (Tailwind v4 @theme). Semantic colors resolve from CSS
+   variables defined below so the whole palette swaps by OS preference or a
+   manual [data-theme] override.
+--------------------------------------------------------------------------- */
+@theme {
+  --color-bg: rgb(var(--bg));
+  --color-surface: rgb(var(--surface));
+  --color-ink: rgb(var(--ink));
+  --color-muted: rgb(var(--muted));
+  --color-line: rgb(var(--line));
+  --color-chip: rgb(var(--chip));
+  --color-viewer-mat: rgb(var(--viewer-mat));
+
+  --font-serif: "Newsreader", Georgia, serif;
+  --font-sans: system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+
+  --text-display: clamp(30px, 5.6vw, 50px);
+  --text-display--line-height: 1.04;
+  --text-display--letter-spacing: -0.015em;
+  --text-title: clamp(24px, 3.2vw, 38px);
+  --text-title--line-height: 1.08;
+  --text-title--letter-spacing: -0.01em;
+  --text-heading: clamp(16px, 2.2vw, 19px);
+  --text-heading--line-height: 1.2;
+  --text-meta: 10.5px;
+  --text-meta--line-height: 1.4;
+  --text-meta--letter-spacing: 0.02em;
+
+  --tracking-label: 0.14em;
+  --tracking-eyebrow: 0.2em;
+
+  --radius-tile: 8px;
+  --radius-card: 12px;
+  --radius-pill: 20px;
+
+  --container-content: 1180px;
+  --container-wide: 1500px;
+
+  /* Prototype breakpoints: d = desktop (>=880), w = wide (>=1300) */
+  --breakpoint-d: 880px;
+  --breakpoint-w: 1300px;
+
+  --animate-rise: rise 0.4s ease both;
+  --animate-fade: fade 0.28s ease;
+
+  @keyframes rise {
+    0% {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    100% {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  @keyframes fade {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Theme variables. Light is the default. The OS dark preference swaps them
+   with no JS (SSR-safe, no flash). A manual [data-theme] override wins over
+   the media query in both directions.
+--------------------------------------------------------------------------- */
+:root {
+  --bg: 245 242 234; /* #f5f2ea warm paper */
+  --surface: 255 255 255; /* #ffffff */
+  --ink: 36 31 24; /* #241f18 */
+  --muted: 107 100 88;
+  --line: 221 216 206;
+  --chip: 236 230 218;
+  --viewer-mat: 231 227 217; /* #e7e3d9 matte behind the photo */
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: 23 20 15; /* #17140f */
+    --surface: 34 30 23; /* #221e17 */
+    --ink: 236 230 217; /* #ece6d9 */
+    --muted: 150 145 133;
+    --line: 48 44 37;
+    --chip: 40 37 30;
+    --viewer-mat: 12 10 6; /* #0c0a06 */
+  }
+}
+
+:root[data-theme="dark"] {
+  --bg: 23 20 15;
+  --surface: 34 30 23;
+  --ink: 236 230 217;
+  --muted: 150 145 133;
+  --line: 48 44 37;
+  --chip: 40 37 30;
+  --viewer-mat: 12 10 6;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+}
+
+body {
+  background-color: rgb(var(--bg));
+  color: rgb(var(--ink));
+  font-family: system-ui, -apple-system, sans-serif;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+input {
+  font-family: inherit;
+}
+
+::selection {
+  background: rgba(140, 120, 90, 0.22);
+}
+
+::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
+
+* {
+  scrollbar-width: none;
+}

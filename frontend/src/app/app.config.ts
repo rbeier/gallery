@@ -3,16 +3,20 @@ import {
   isDevMode,
   provideBrowserGlobalErrorListeners,
 } from '@angular/core'
-import { provideClientHydration } from '@angular/platform-browser'
-import { provideRouter } from '@angular/router'
+import { provideClientHydration, withEventReplay } from '@angular/platform-browser'
+import { provideRouter, withComponentInputBinding, withInMemoryScrolling } from '@angular/router'
 import { provideServiceWorker } from '@angular/service-worker'
 import { routes } from './app.routes'
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
-    provideRouter(routes),
-    provideClientHydration(),
+    provideRouter(
+      routes,
+      withComponentInputBinding(),
+      withInMemoryScrolling({ scrollPositionRestoration: 'enabled', anchorScrolling: 'enabled' }),
+    ),
+    provideClientHydration(withEventReplay()),
     provideServiceWorker('ngsw-worker.js', {
       enabled: !isDevMode(),
       registrationStrategy: 'registerWhenStable:30000',

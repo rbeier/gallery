@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "gallery-ssr",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["dist/gallery/server/server.mjs"],
+      "port": 4000
+    }
+  ]
+}

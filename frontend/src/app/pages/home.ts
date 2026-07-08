@@ -1,0 +1,56 @@
+import { Component, inject } from '@angular/core'
+import { RouterLink } from '@angular/router'
+import { AlbumStrip } from '../components/album-strip'
+import { ContentShell } from '../components/content-shell'
+import { PhotoGrid } from '../components/photo-grid'
+import { GalleryService } from '../services/gallery.service'
+import { SeoService } from '../services/seo.service'
+
+@Component({
+  selector: 'app-home',
+  imports: [RouterLink, ContentShell, AlbumStrip, PhotoGrid],
+  template: `
+    <app-content-shell>
+      <div class="mb-[clamp(26px,4vw,40px)]">
+        <h1 class="m-0 max-w-[11em] font-serif text-display font-normal">
+          Photographs from ten years of looking.
+        </h1>
+        <div class="mt-4 text-[13px] leading-none tracking-[.04em] text-muted">
+          {{ gallery.stat() }}
+        </div>
+        <a
+          routerLink="/search"
+          class="mt-[22px] flex max-w-[440px] cursor-pointer items-center gap-[10px] rounded-[26px] bg-chip px-4 py-3 text-[13.5px] text-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"
+        >
+          <span class="text-[14px]" aria-hidden="true">⌕</span>Search tags, camera, place, date…
+        </a>
+      </div>
+
+      <div class="mb-[14px] flex items-baseline justify-between">
+        <h2 class="font-serif text-heading font-medium">Portfolios</h2>
+        <a routerLink="/albums" class="cursor-pointer text-[12px] text-muted">See all →</a>
+      </div>
+      <div class="mb-[clamp(30px,4vw,44px)]">
+        <app-album-strip [albums]="gallery.albums()" />
+      </div>
+
+      <div class="mb-[6px] border-t border-line pt-[18px]">
+        <h2 class="font-serif text-heading font-medium">All photographs</h2>
+      </div>
+
+      <div class="mt-[14px]">
+        <app-photo-grid [photos]="gallery.allPhotos()" [linkParams]="{ from: 'all' }" />
+      </div>
+    </app-content-shell>
+  `,
+})
+export class Home {
+  protected readonly gallery = inject(GalleryService)
+
+  constructor() {
+    inject(SeoService).set(
+      `${this.gallery.photographer} — Photography`,
+      `A minimalist photography portfolio. ${this.gallery.stat()}.`,
+    )
+  }
+}
