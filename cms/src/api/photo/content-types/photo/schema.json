@@ -30,7 +30,9 @@
       "description": "YYYY-MM"
     },
     "tags": {
-      "type": "json"
+      "type": "component",
+      "repeatable": true,
+      "component": "photo.tag"
     },
     "ratio": {
       "type": "decimal",

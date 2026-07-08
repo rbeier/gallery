@@ -89,6 +89,7 @@ async function seedContent(strapi: Core.Strapi) {
     await strapi.documents('api::photo.photo').create({
       data: {
         ...meta,
+        tags: meta.tags.map((value) => ({ value })),
         ratio: Math.round(ratio * 100) / 100,
         grad: GRADIENTS[i % GRADIENTS.length],
         image: media.id,

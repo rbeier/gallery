@@ -41,7 +41,7 @@ interface StrapiPhoto {
   lens: string | null
   location: string | null
   date: string | null
-  tags: string[] | null
+  tags: { value: string }[] | null
   ratio: number | null
   description: string | null
   grad: string | null
@@ -67,6 +67,7 @@ export class StrapiService {
         this.http.get<StrapiList<StrapiPhoto>>(`${this.base}/api/photos`, {
           params: {
             'populate[album][fields][0]': 'slug',
+            'populate[tags][fields][0]': 'value',
             'populate[image][fields][0]': 'url',
             'populate[image][fields][1]': 'formats',
             'populate[image][fields][2]': 'width',
@@ -100,7 +101,7 @@ export class StrapiService {
       lens: p.lens ?? '',
       location: p.location ?? '',
       date: p.date ?? '',
-      tags: p.tags ?? [],
+      tags: (p.tags ?? []).map((t) => t.value),
       ratio: p.ratio ?? 1.5,
       description: p.description ?? '',
       grad: p.grad ?? '',

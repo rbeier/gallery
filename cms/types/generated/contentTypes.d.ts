@@ -534,7 +534,7 @@ export interface ApiPhotoPhoto extends Struct.CollectionTypeSchema {
     publishedAt: Schema.Attribute.DateTime;
     ratio: Schema.Attribute.Decimal & Schema.Attribute.DefaultTo<1.5>;
     src: Schema.Attribute.String;
-    tags: Schema.Attribute.JSON;
+    tags: Schema.Attribute.Component<'photo.tag', true>;
     title: Schema.Attribute.String & Schema.Attribute.Required;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &

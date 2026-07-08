@@ -1,0 +1,14 @@
+{
+  "collectionName": "components_photo_tags",
+  "info": {
+    "displayName": "Tag",
+    "icon": "hashtag"
+  },
+  "options": {},
+  "attributes": {
+    "value": {
+      "type": "string",
+      "required": true
+    }
+  }
+}
