@@ -1,0 +1,27 @@
+{
+  "kind": "collectionType",
+  "collectionName": "lenses",
+  "info": {
+    "singularName": "lens",
+    "pluralName": "lenses",
+    "displayName": "Lens",
+    "description": "A reusable lens"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true,
+      "unique": true
+    },
+    "photos": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::photo.photo",
+      "mappedBy": "lens"
+    }
+  }
+}

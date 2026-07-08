@@ -505,6 +505,35 @@ export interface ApiGlobalGlobal extends Struct.SingleTypeSchema {
   };
 }
 
+export interface ApiLensLens extends Struct.CollectionTypeSchema {
+  collectionName: 'lenses';
+  info: {
+    description: 'A reusable lens';
+    displayName: 'Lens';
+    pluralName: 'lenses';
+    singularName: 'lens';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<'oneToMany', 'api::lens.lens'> &
+      Schema.Attribute.Private;
+    name: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.Unique;
+    photos: Schema.Attribute.Relation<'oneToMany', 'api::photo.photo'>;
+    publishedAt: Schema.Attribute.DateTime;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiPhotoPhoto extends Struct.CollectionTypeSchema {
   collectionName: 'photos';
   info: {
@@ -518,21 +547,19 @@ export interface ApiPhotoPhoto extends Struct.CollectionTypeSchema {
   };
   attributes: {
     album: Schema.Attribute.Relation<'manyToOne', 'api::album.album'>;
-    camera: Schema.Attribute.String;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
     date: Schema.Attribute.Date;
     description: Schema.Attribute.Text;
     image: Schema.Attribute.Media<'images'>;
-    lens: Schema.Attribute.String;
+    lens: Schema.Attribute.Relation<'manyToOne', 'api::lens.lens'>;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<'oneToMany', 'api::photo.photo'> &
       Schema.Attribute.Private;
     location: Schema.Attribute.JSON &
       Schema.Attribute.CustomField<'plugin::google-maps.location-picker'>;
     publishedAt: Schema.Attribute.DateTime;
-    ratio: Schema.Attribute.Decimal & Schema.Attribute.DefaultTo<1.5>;
     tags: Schema.Attribute.Relation<'manyToMany', 'api::tag.tag'>;
     title: Schema.Attribute.String & Schema.Attribute.Required;
     updatedAt: Schema.Attribute.DateTime;
@@ -1128,6 +1155,7 @@ declare module '@strapi/strapi' {
       'admin::user': AdminUser;
       'api::album.album': ApiAlbumAlbum;
       'api::global.global': ApiGlobalGlobal;
+      'api::lens.lens': ApiLensLens;
       'api::photo.photo': ApiPhotoPhoto;
       'api::tag.tag': ApiTagTag;
       'plugin::content-releases.release': PluginContentReleasesRelease;

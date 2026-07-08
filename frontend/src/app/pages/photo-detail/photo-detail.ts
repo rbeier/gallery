@@ -22,7 +22,6 @@ export class PhotoDetail {
   readonly from = input('all', { transform: (v?: string) => v ?? 'all' })
   readonly q = input('', { transform: asString })
   readonly tag = input('', { transform: asString })
-  readonly camera = input('', { transform: asString })
   readonly place = input('', { transform: asString })
   readonly year = input('', { transform: asString })
 
@@ -40,7 +39,6 @@ export class PhotoDetail {
       return this.gallery.search({
         q: this.q(),
         tag: this.split(this.tag()),
-        camera: this.split(this.camera()),
         place: this.split(this.place()),
         year: this.split(this.year()),
       })
@@ -65,7 +63,7 @@ export class PhotoDetail {
     const p = this.photo()
     if (!p) return []
     return [
-      { key: 'Camera', value: p.lens ? `${p.camera} · ${p.lens}` : p.camera },
+      { key: 'Lens', value: p.lens },
       { key: 'Location', value: p.location },
       { key: 'Date', value: formatMonth(p.date) },
       { key: 'Portfolio', value: this.gallery.albumName(p.album) },
@@ -95,7 +93,6 @@ export class PhotoDetail {
         queryParams: {
           q: this.q() || null,
           tag: this.tag() || null,
-          camera: this.camera() || null,
           place: this.place() || null,
           year: this.year() || null,
         },

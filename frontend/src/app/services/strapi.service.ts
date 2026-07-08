@@ -39,12 +39,10 @@ interface StrapiMedia {
 interface StrapiPhoto {
   id: number
   title: string
-  camera: string | null
-  lens: string | null
+  lens: { name: string } | null
   location: { address?: string } | null
   date: string | null
   tags: { name: string }[] | null
-  ratio: number | null
   description: string | null
   image: StrapiMedia | null
   album: { slug: string } | null
@@ -66,6 +64,7 @@ export class StrapiService {
         this.http.get<StrapiList<StrapiPhoto>>(`${this.base}/api/photos`, {
           params: {
             'populate[album][fields][0]': 'slug',
+            'populate[lens][fields][0]': 'name',
             'populate[tags][fields][0]': 'name',
             'populate[image][fields][0]': 'url',
             'populate[image][fields][1]': 'formats',
@@ -100,12 +99,11 @@ export class StrapiService {
       id: p.id,
       title: p.title,
       album: (p.album?.slug ?? '') as AlbumId,
-      camera: p.camera ?? '',
-      lens: p.lens ?? '',
+      lens: p.lens?.name ?? '',
       location: p.location?.address ?? '',
       date: p.date ?? '',
       tags: (p.tags ?? []).map((t) => t.name),
-      ratio: p.ratio ?? 1.5,
+      ratio: ratioOf(p.image),
       description: p.description ?? '',
       grad: gradientFor(p.id),
       src: this.imageUrl(p.image),
@@ -127,4 +125,10 @@ export class StrapiService {
     const rel = media.formats?.['large']?.url ?? media.formats?.['medium']?.url ?? media.url
     return rel.startsWith('http') ? rel : `${this.base}${rel}`
   }
+}
+
+/** Aspect ratio (width / height) derived from the image's own dimensions. */
+function ratioOf(media: StrapiMedia | null): number {
+  if (!media?.width || !media?.height) return 1.5
+  return Math.round((media.width / media.height) * 100) / 100
 }

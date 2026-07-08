@@ -19,11 +19,11 @@
     "description": {
       "type": "text"
     },
-    "camera": {
-      "type": "string"
-    },
     "lens": {
-      "type": "string"
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::lens.lens",
+      "inversedBy": "photos"
     },
     "location": {
       "type": "customField",
@@ -37,10 +37,6 @@
       "relation": "manyToMany",
       "target": "api::tag.tag",
       "inversedBy": "photos"
-    },
-    "ratio": {
-      "type": "decimal",
-      "default": 1.5
     },
     "image": {
       "type": "media",

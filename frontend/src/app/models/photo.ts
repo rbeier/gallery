@@ -4,7 +4,6 @@ export interface Photo {
   id: number
   title: string
   album: AlbumId
-  camera: string
   lens: string
   location: string
   /** "YYYY-MM" */

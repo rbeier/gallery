@@ -12,6 +12,8 @@ const PUBLIC_ACTIONS = [
   'api::photo.photo.findOne',
   'api::tag.tag.find',
   'api::tag.tag.findOne',
+  'api::lens.lens.find',
+  'api::lens.lens.findOne',
   'api::global.global.find',
 ];
 
@@ -94,6 +96,12 @@ async function seedContent(strapi: Core.Strapi) {
     tagIdByName.set(name, tag.documentId);
   }
 
+  const lensIdByName = new Map<string, string>();
+  for (const name of new Set(metas.map((m) => m.lens))) {
+    const lens = await strapi.documents('api::lens.lens').create({ data: { name } });
+    lensIdByName.set(name, lens.documentId);
+  }
+
   // Default each album cover to the first image assigned to it; editors can
   // change the cover later in the admin.
   const coverBySlug = new Map<string, number>();
@@ -101,15 +109,14 @@ async function seedContent(strapi: Core.Strapi) {
   for (let i = 0; i < files.length; i++) {
     const media = await uploadImage(strapi, path.join(imageDir!, files[i]));
     const meta = metas[i];
-    const ratio = media.width && media.height ? media.width / media.height : 1.5;
     const slug = albumSlugs[i % albumSlugs.length];
     if (!coverBySlug.has(slug)) coverBySlug.set(slug, media.id);
     await strapi.documents('api::photo.photo').create({
       data: {
         ...meta,
         location: locationValue(meta.location),
+        lens: lensIdByName.get(meta.lens)!,
         tags: meta.tags.map((name) => tagIdByName.get(name)!),
-        ratio: Math.round(ratio * 100) / 100,
         image: media.id,
         album: albumIdBySlug.get(slug),
       },
@@ -142,12 +149,8 @@ async function tidyPhotoEditView(strapi: Core.Strapi) {
     [{ name: 'title', size: 12 }],
     [{ name: 'description', size: 12 }],
     [
-      { name: 'camera', size: 6 },
       { name: 'lens', size: 6 },
-    ],
-    [
       { name: 'date', size: 6 },
-      { name: 'ratio', size: 6 },
     ],
     [{ name: 'location', size: 12 }],
     [{ name: 'image', size: 12 }],

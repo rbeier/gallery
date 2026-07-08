@@ -1,7 +1,8 @@
 import type { Photo } from '../models/photo'
 import { shortLocation } from './short-location'
 
-/** "Leica Q2 · Cornwall" */
+/** "28mm · Cornwall" (drops the lens prefix when unknown) */
 export function photoMeta(photo: Photo): string {
-  return `${photo.camera} · ${shortLocation(photo.location)}`
+  const place = shortLocation(photo.location)
+  return photo.lens ? `${photo.lens} · ${place}` : place
 }

@@ -2,7 +2,6 @@
 export interface SearchFilters {
   q: string
   tag: string[]
-  camera: string[]
   place: string[]
   year: string[]
 }

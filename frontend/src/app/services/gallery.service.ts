@@ -90,7 +90,6 @@ export class GalleryService {
     const photos = this.data.photos
     return [
       { kind: 'tag', label: 'Tag', options: uniq(photos.flatMap((p) => p.tags)).sort() },
-      { kind: 'camera', label: 'Camera', options: uniq(photos.map((p) => p.camera)).sort() },
       {
         kind: 'place',
         label: 'Place',
@@ -106,18 +105,17 @@ export class GalleryService {
     ]
   }
 
-  /** Free text (title/desc/camera/location/tags) AND facets (OR within group). */
+  /** Free text (title/desc/lens/location/tags) AND facets (OR within group). */
   search(filters: SearchFilters): PhotoView[] {
     const q = filters.q.trim().toLowerCase()
     return this.data.photos
       .filter((p) => {
         if (q) {
           const hay =
-            `${p.title} ${p.description} ${p.camera} ${p.location} ${p.tags.join(' ')}`.toLowerCase()
+            `${p.title} ${p.description} ${p.lens} ${p.location} ${p.tags.join(' ')}`.toLowerCase()
           if (!hay.includes(q)) return false
         }
         if (filters.tag.length && !p.tags.some((t) => filters.tag.includes(t))) return false
-        if (filters.camera.length && !filters.camera.includes(p.camera)) return false
         if (filters.place.length && !filters.place.includes(shortLocation(p.location))) return false
         if (filters.year.length && !filters.year.includes(p.date.split('-')[0])) return false
         return true

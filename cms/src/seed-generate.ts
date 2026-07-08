@@ -52,7 +52,6 @@ export function locationValue(address: string) {
   };
 }
 
-const CAMERAS = ['Pixel 7 Pro', 'Leica Q2', 'Fuji X100V', 'Sony A7 IV', 'Ricoh GR III'];
 const LENSES = ['24mm', '28mm', '35mm', '50mm', '18mm'];
 
 const TAGS = [
@@ -85,7 +84,6 @@ function pickN<T>(arr: T[], n: number, r: () => number): T[] {
 
 export interface GeneratedMeta {
   title: string;
-  camera: string;
   lens: string;
   location: string;
   date: string;
@@ -102,7 +100,6 @@ export function generateMeta(index: number): GeneratedMeta {
   const day = String(1 + Math.floor(r() * 28)).padStart(2, '0');
   return {
     title,
-    camera: pick(CAMERAS, r),
     lens: pick(LENSES, r),
     location: pick(PLACES, r),
     date: `${year}-${month}-${day}`,

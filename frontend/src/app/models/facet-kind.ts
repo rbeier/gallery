@@ -1,1 +1,1 @@
-export type FacetKind = 'tag' | 'camera' | 'place' | 'year'
+export type FacetKind = 'tag' | 'place' | 'year'

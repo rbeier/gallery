@@ -24,7 +24,6 @@ export class Search {
   // Query-param inputs (require withComponentInputBinding).
   readonly q = input('', { transform: asString })
   readonly tag = input('', { transform: asString })
-  readonly camera = input('', { transform: asString })
   readonly place = input('', { transform: asString })
   readonly year = input('', { transform: asString })
 
@@ -34,7 +33,6 @@ export class Search {
   private readonly filters = computed<SearchFilters>(() => ({
     q: this.q(),
     tag: splitParam(this.tag()),
-    camera: splitParam(this.camera()),
     place: splitParam(this.place()),
     year: splitParam(this.year()),
   }))
@@ -49,7 +47,6 @@ export class Search {
     from: 'search',
     q: this.q() || null,
     tag: this.tag() || null,
-    camera: this.camera() || null,
     place: this.place() || null,
     year: this.year() || null,
   }))
@@ -57,7 +54,7 @@ export class Search {
   constructor() {
     inject(SeoService).set(
       `Search — ${this.gallery.photographer}`,
-      'Search and filter the photograph library by text, tag, camera, place, and year.',
+      'Search and filter the photograph library by text, tag, place, and year.',
     )
   }
 
