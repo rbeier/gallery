@@ -75,8 +75,13 @@ async function seedContent(strapi: Core.Strapi) {
     `[seed] Empty database — seeding ${ALBUMS.length} albums and ${files.length} photos.`,
   );
 
-  await strapi.documents('api::global.global').create({
-    data: { photographer: PHOTOGRAPHER },
+  const globalDoc = await strapi.documents('api::global.global').create({
+    data: {
+      photographer: PHOTOGRAPHER,
+      heading: `${PHOTOGRAPHER.split(' ')[0]}'s Portfolio`,
+      location: 'Based in Málaga, ES',
+      bio: 'Photographer working across the south of Spain — landscapes, towns, and the light in between. Ten years of looking, one frame at a time.',
+    },
   });
 
   const albumIdBySlug = new Map<string, string>();
@@ -105,11 +110,13 @@ async function seedContent(strapi: Core.Strapi) {
   // Default each album cover to the first image assigned to it; editors can
   // change the cover later in the admin.
   const coverBySlug = new Map<string, number>();
+  let avatarId: number | undefined;
 
   for (let i = 0; i < files.length; i++) {
     const media = await uploadImage(strapi, path.join(imageDir!, files[i]));
     const meta = metas[i];
     const slug = albumSlugs[i % albumSlugs.length];
+    if (avatarId === undefined) avatarId = media.id;
     if (!coverBySlug.has(slug)) coverBySlug.set(slug, media.id);
     await strapi.documents('api::photo.photo').create({
       data: {
@@ -127,6 +134,13 @@ async function seedContent(strapi: Core.Strapi) {
     await strapi.documents('api::album.album').update({
       documentId: albumIdBySlug.get(slug)!,
       data: { cover: coverId },
+    });
+  }
+
+  if (avatarId !== undefined) {
+    await strapi.documents('api::global.global').update({
+      documentId: globalDoc.documentId,
+      data: { avatar: avatarId },
     });
   }
 

@@ -1,10 +1,11 @@
 import { Injectable, inject, makeStateKey, TransferState } from '@angular/core'
-import { ALBUMS, PHOTOGRAPHER, PHOTOS } from '../data/seed'
+import { ALBUMS, PHOTOS, PROFILE } from '../data/seed'
 import type { AlbumId } from '../models/album-id'
 import type { AlbumView } from '../models/album-view'
 import type { FacetGroup } from '../models/facet-group'
 import type { GalleryData } from '../models/gallery-data'
 import type { PhotoView } from '../models/photo-view'
+import type { Profile } from '../models/profile'
 import type { SearchFilters } from '../models/search-filters'
 import { shortLocation } from '../util/short-location'
 import { toView } from '../util/to-view'
@@ -15,7 +16,7 @@ const GALLERY_KEY = makeStateKey<GalleryData>('gallery')
 const SEED: GalleryData = {
   photos: PHOTOS,
   albums: ALBUMS,
-  photographer: PHOTOGRAPHER,
+  profile: PROFILE,
 }
 
 @Injectable({ providedIn: 'root' })
@@ -45,7 +46,11 @@ export class GalleryService {
   }
 
   get photographer(): string {
-    return this.data.photographer
+    return this.data.profile.name
+  }
+
+  profile(): Profile {
+    return this.data.profile
   }
 
   allPhotos(): PhotoView[] {

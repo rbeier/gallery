@@ -50,6 +50,10 @@ interface StrapiPhoto {
 
 interface StrapiGlobal {
   photographer: string | null
+  heading: string | null
+  location: string | null
+  bio: string | null
+  avatar: StrapiMedia | null
 }
 
 @Injectable({ providedIn: 'root' })
@@ -84,13 +88,27 @@ export class StrapiService {
           },
         }),
       ),
-      firstValueFrom(this.http.get<StrapiSingle<StrapiGlobal>>(`${this.base}/api/global`)),
+      firstValueFrom(
+        this.http.get<StrapiSingle<StrapiGlobal>>(`${this.base}/api/global`, {
+          params: {
+            'populate[avatar][fields][0]': 'url',
+            'populate[avatar][fields][1]': 'formats',
+          },
+        }),
+      ),
     ])
 
+    const g = global.data
     return {
       photos: photos.data.map((p) => this.mapPhoto(p)),
       albums: albums.data.map((a) => this.mapAlbum(a)),
-      photographer: global.data?.photographer ?? '',
+      profile: {
+        name: g?.photographer ?? '',
+        heading: g?.heading ?? '',
+        location: g?.location ?? '',
+        bio: g?.bio ?? '',
+        avatar: this.imageUrl(g?.avatar ?? null),
+      },
     }
   }
 

@@ -14,11 +14,12 @@ import { SeoService } from '../../services/seo.service'
 })
 export class Home {
   protected readonly gallery = inject(GalleryService)
+  protected readonly profile = this.gallery.profile()
 
   constructor() {
     inject(SeoService).set(
       `${this.gallery.photographer} — Photography`,
-      `A minimalist photography portfolio. ${this.gallery.stat()}.`,
+      this.profile.bio || `A minimalist photography portfolio. ${this.gallery.stat()}.`,
     )
   }
 }

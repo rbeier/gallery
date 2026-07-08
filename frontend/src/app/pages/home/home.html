@@ -1,8 +1,30 @@
 <app-content-shell>
-  <div class="mb-[clamp(26px,4vw,40px)]">
-    <h1 class="m-0 max-w-[11em] font-serif text-display font-normal">
-      Photographs from ten years of looking.
-    </h1>
+  <header class="mb-[clamp(26px,4vw,40px)]">
+    <div class="flex items-center gap-[18px]">
+      @if (profile.avatar) {
+        <img
+          [src]="profile.avatar"
+          [alt]="profile.name"
+          width="76"
+          height="76"
+          decoding="async"
+          class="h-[76px] w-[76px] flex-none rounded-full object-cover ring-1 ring-line"
+        />
+      }
+      <div class="min-w-0">
+        <h1 class="m-0 font-serif text-display font-normal">{{ profile.heading }}</h1>
+        @if (profile.location) {
+          <div class="mt-[6px] font-mono text-[11px] uppercase tracking-[.14em] text-muted">
+            {{ profile.location }}
+          </div>
+        }
+      </div>
+    </div>
+
+    @if (profile.bio) {
+      <p class="mt-[18px] max-w-[42em] text-[15px] leading-[1.65] text-ink/80">{{ profile.bio }}</p>
+    }
+
     <div class="mt-4 text-[13px] leading-none tracking-[.04em] text-muted">
       {{ gallery.stat() }}
     </div>
@@ -12,7 +34,7 @@
     >
       <span class="text-[14px]" aria-hidden="true">⌕</span>Search tags, lens, place, date…
     </a>
-  </div>
+  </header>
 
   <div class="mb-[14px] flex items-baseline justify-between">
     <h2 class="font-serif text-heading font-medium">Portfolios</h2>

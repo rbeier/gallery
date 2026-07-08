@@ -1,5 +1,6 @@
 import type { Album } from '../models/album'
 import type { Photo } from '../models/photo'
+import type { Profile } from '../models/profile'
 import { gradientFor } from '../util/gradient'
 
 export const ALBUMS: Album[] = [
@@ -191,4 +192,9 @@ const RAW: Omit<Photo, 'grad'>[] = [
 
 export const PHOTOS: Photo[] = RAW.map((p) => ({ ...p, grad: gradientFor(p.id) }))
 
-export const PHOTOGRAPHER = 'Robin Beier'
+export const PROFILE: Profile = {
+  name: 'Robin Beier',
+  heading: "Robin's Portfolio",
+  location: 'Based in Málaga, ES',
+  bio: 'Photographer working across the south of Spain — landscapes, towns, and the light in between. Ten years of looking, one frame at a time.',
+}

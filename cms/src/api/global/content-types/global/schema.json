@@ -16,6 +16,21 @@
       "type": "string",
       "required": true,
       "default": "Robin Beier"
+    },
+    "heading": {
+      "type": "string"
+    },
+    "location": {
+      "type": "string"
+    },
+    "bio": {
+      "type": "text"
+    },
+    "avatar": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": ["images"]
     }
   }
 }
