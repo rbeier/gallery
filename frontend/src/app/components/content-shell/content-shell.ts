@@ -6,12 +6,7 @@ import { Component } from '@angular/core'
  */
 @Component({
   selector: 'app-content-shell',
-  template: `
-    <div
-      class="mx-auto w-full max-w-[640px] px-5 pt-6 pb-[110px] d:max-w-[1180px] d:px-10 d:pt-11 d:pb-[130px] w:max-w-[1500px]"
-    >
-      <ng-content />
-    </div>
-  `,
+  templateUrl: './content-shell.html',
+  styleUrl: './content-shell.css',
 })
 export class ContentShell {}

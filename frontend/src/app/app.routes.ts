@@ -3,23 +3,23 @@ import type { Routes } from '@angular/router'
 export const routes: Routes = [
   {
     path: '',
-    loadComponent: () => import('./pages/home').then((m) => m.Home),
+    loadComponent: () => import('./pages/home/home').then((m) => m.Home),
   },
   {
     path: 'albums',
-    loadComponent: () => import('./pages/albums').then((m) => m.Albums),
+    loadComponent: () => import('./pages/albums/albums').then((m) => m.Albums),
   },
   {
     path: 'albums/:albumId',
-    loadComponent: () => import('./pages/album-detail').then((m) => m.AlbumDetail),
+    loadComponent: () => import('./pages/album-detail/album-detail').then((m) => m.AlbumDetail),
   },
   {
     path: 'search',
-    loadComponent: () => import('./pages/search').then((m) => m.Search),
+    loadComponent: () => import('./pages/search/search').then((m) => m.Search),
   },
   {
     path: 'photo/:id',
-    loadComponent: () => import('./pages/photo-detail').then((m) => m.PhotoDetail),
+    loadComponent: () => import('./pages/photo-detail/photo-detail').then((m) => m.PhotoDetail),
   },
   { path: '**', redirectTo: '' },
 ]

@@ -2,17 +2,13 @@ import { Component, computed, inject, signal } from '@angular/core'
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop'
 import { NavigationEnd, Router, RouterOutlet } from '@angular/router'
 import { filter } from 'rxjs'
-import { TopBar } from './components/top-bar'
+import { TopBar } from './components/top-bar/top-bar'
 
 @Component({
   selector: 'app-root',
   imports: [RouterOutlet, TopBar],
-  template: `
-    @if (showChrome()) {
-      <app-top-bar />
-    }
-    <router-outlet />
-  `,
+  templateUrl: './app.html',
+  styleUrl: './app.css',
 })
 export class App {
   private readonly router = inject(Router)

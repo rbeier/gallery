@@ -1,0 +1,11 @@
+<app-content-shell>
+  <div class="mb-[clamp(22px,3vw,34px)]">
+    <div class="font-mono text-[11px] uppercase tracking-[.16em] text-muted">
+      {{ gallery.photographer }}
+    </div>
+    <h1 class="mt-2 font-serif text-[clamp(28px,5vw,46px)] font-normal tracking-[-.01em]">
+      Portfolios
+    </h1>
+  </div>
+  <app-album-grid [albums]="gallery.albums()" />
+</app-content-shell>
