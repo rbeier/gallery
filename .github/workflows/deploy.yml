@@ -6,58 +6,10 @@ on:
       - main
 
 jobs:
-  build-and-deploy:
-    runs-on: ubuntu-24.04-arm64
-    permissions:
-      contents: read
-      packages: write
+  deploy:
+    runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Downcase repository name
-        run: |
-          echo "REPO_LOWER=${GITHUB_REPOSITORY,,}" >> $GITHUB_ENV
-
-      - name: Log in to GitHub Container Registry (GHCR)
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Build and push Strapi CMS image
-        uses: docker/build-push-action@v5
-        with:
-          context: ./cms
-          push: true
-          tags: |
-            ghcr.io/${{ env.REPO_LOWER }}/cms:latest
-            ghcr.io/${{ env.REPO_LOWER }}/cms:${{ github.sha }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-
-      - name: Build and push Angular Frontend image
-        uses: docker/build-push-action@v5
-        with:
-          context: ./frontend
-          push: true
-          tags: |
-            ghcr.io/${{ env.REPO_LOWER }}/frontend:latest
-            ghcr.io/${{ env.REPO_LOWER }}/frontend:${{ github.sha }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-
-      - name: Load docker-compose.yml content
-        run: |
-          echo "DOCKER_COMPOSE_CONTENT<<EOF" >> $GITHUB_ENV
-          cat docker-compose.yml >> $GITHUB_ENV
-          echo "EOF" >> $GITHUB_ENV
-
       - name: Deploy to VPS via SSH
         uses: appleboy/ssh-action@v1.0.3
         with:
@@ -65,16 +17,29 @@ jobs:
           username: ${{ secrets.VPS_USERNAME }}
           key: ${{ secrets.VPS_SSH_KEY }}
           port: ${{ secrets.VPS_PORT || 22 }}
-          envs: REPO_LOWER,DOCKER_COMPOSE_CONTENT
           script: |
             # Ensure deployment directory exists
             mkdir -p /opt/rbeier.dev
             cd /opt/rbeier.dev
 
+            # Initialize and fetch git safely without failing on non-empty directories (like cms-data/)
+            if [ ! -d ".git" ]; then
+              git init
+              git remote add origin git@github.com:${{ github.repository }}.git
+              git fetch origin
+              git checkout -f main
+            else
+              git fetch origin
+              git checkout -f main
+            fi
+
+            # Pre-create persistent directories to ensure they are owned by the deployment SSH user
+            mkdir -p cms-data/database cms-data/uploads
+
             # Create or update .env file
             cat << EOF > .env
-            CMS_IMAGE=ghcr.io/${REPO_LOWER}/cms:latest
-            FRONTEND_IMAGE=ghcr.io/${REPO_LOWER}/frontend:latest
+            CMS_IMAGE=gallery-cms:latest
+            FRONTEND_IMAGE=gallery-frontend:latest
             APP_KEYS="${{ secrets.APP_KEYS }}"
             API_TOKEN_SALT="${{ secrets.API_TOKEN_SALT }}"
             ADMIN_JWT_SECRET="${{ secrets.ADMIN_JWT_SECRET }}"
@@ -85,14 +50,8 @@ jobs:
             STRAPI_BASE_URL="${{ secrets.STRAPI_BASE_URL }}"
             EOF
 
-            # Write docker-compose.yml file from env variable
-            printf '%s\n' "$DOCKER_COMPOSE_CONTENT" > docker-compose.yml
+            # Build and restart containers natively on the ARM64 VPS host
+            docker compose up --build -d
 
-            # Pull updated images from GHCR
-            docker compose pull
-
-            # Run compose in detached mode
-            docker compose up -d
-
-            # Clean up old unused docker images
+            # Clean up old unused docker images to save space
             docker image prune -f
