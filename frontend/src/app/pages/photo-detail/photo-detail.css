@@ -1,1 +1,13 @@
 /* Styling is handled by Tailwind utility classes in the template and host. */
+
+/*
+ * Light deterrents against casual image saving (drag-to-desktop, long-press
+ * "Save Image" on iOS, text-selection lasso). Not a security boundary — the
+ * source URL is still in the network tab — just friction for the average visitor.
+ */
+.image-guard {
+  -webkit-touch-callout: none;
+  -webkit-user-drag: none;
+  user-select: none;
+}
+

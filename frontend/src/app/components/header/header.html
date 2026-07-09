@@ -1,0 +1,54 @@
+<!--
+  Minimal top bar shown on every page except the full-bleed photo viewer.
+  Inner column widths mirror content-shell so the brand aligns with page content.
+-->
+<div
+  class="mx-auto flex w-full max-w-[640px] items-center justify-between gap-4 px-5 d:max-w-[1180px] d:gap-6 d:px-10 w:max-w-[1500px]"
+>
+  <!-- Brand -->
+  <a
+    routerLink="/"
+    class="min-w-0 cursor-pointer truncate font-serif text-[clamp(18px,2vw,21px)] font-medium tracking-[-.01em] text-ink"
+    >{{ gallery.photographer }}</a
+  >
+
+  <!-- Primary nav -->
+  <nav class="flex flex-none items-center gap-4 d:gap-6" aria-label="Primary">
+    <a
+      routerLink="/"
+      [routerLinkActiveOptions]="{ exact: true }"
+      routerLinkActive
+      #work="routerLinkActive"
+      [class.text-ink]="work.isActive"
+      [class.font-medium]="work.isActive"
+      class="cursor-pointer text-[14px] text-muted hover:text-ink"
+      >All Photos</a
+    >
+    <a
+      routerLink="/albums"
+      routerLinkActive
+      #alb="routerLinkActive"
+      [class.text-ink]="alb.isActive"
+      [class.font-medium]="alb.isActive"
+      class="cursor-pointer text-[14px] text-muted hover:text-ink"
+      >Albums</a
+    >
+    <a
+      routerLink="/search"
+      routerLinkActive
+      #srch="routerLinkActive"
+      [class.text-ink]="srch.isActive"
+      [class.font-medium]="srch.isActive"
+      class="cursor-pointer text-[14px] text-muted hover:text-ink"
+      >Search</a
+    >
+    <button
+      type="button"
+      (click)="theme.toggle()"
+      [attr.aria-label]="theme.isDark() ? 'Switch to light theme' : 'Switch to dark theme'"
+      class="cursor-pointer border-0 bg-transparent p-0 text-[14px] leading-none text-muted hover:text-ink"
+    >
+      {{ theme.glyph() }}
+    </button>
+  </nav>
+</div>

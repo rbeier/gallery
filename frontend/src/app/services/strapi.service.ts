@@ -27,6 +27,7 @@ interface StrapiAlbum {
 
 interface StrapiFormat {
   url: string
+  width: number | null
 }
 
 interface StrapiMedia {
@@ -125,6 +126,7 @@ export class StrapiService {
       description: p.description ?? '',
       grad: gradientFor(p.id),
       src: this.imageUrl(p.image),
+      srcFull: this.viewerUrl(p.image),
     }
   }
 
@@ -141,9 +143,34 @@ export class StrapiService {
   private imageUrl(media: StrapiMedia | null): string | undefined {
     if (!media) return undefined
     const rel = media.formats?.['large']?.url ?? media.formats?.['medium']?.url ?? media.url
+    return this.absolute(rel)
+  }
+
+  /**
+   * URL for the full-screen viewer: the largest generated format whose width
+   * stays within {@link VIEWER_MAX_WIDTH}. Never returns the raw original, so a
+   * visitor can't grab the full-resolution file. Falls back to the original only
+   * when it is itself within the cap (small images that spawn no larger format).
+   */
+  private viewerUrl(media: StrapiMedia | null): string | undefined {
+    if (!media) return undefined
+    const capped = Object.values(media.formats ?? {})
+      .filter((f) => f.width != null && f.width <= VIEWER_MAX_WIDTH)
+      .sort((a, b) => (b.width ?? 0) - (a.width ?? 0))
+    if (capped.length) return this.absolute(capped[0].url)
+    // No format within the cap — safe to use the original only if it's small enough.
+    if (media.width != null && media.width <= VIEWER_MAX_WIDTH) return this.absolute(media.url)
+    // Otherwise fall back to the display-sized format rather than the original.
+    return this.imageUrl(media)
+  }
+
+  private absolute(rel: string): string {
     return rel.startsWith('http') ? rel : `${this.base}${rel}`
   }
 }
+
+/** Hard cap on the viewer image width — keeps the full-resolution original private. */
+const VIEWER_MAX_WIDTH = 2000
 
 /** Aspect ratio (width / height) derived from the image's own dimensions. */
 function ratioOf(media: StrapiMedia | null): number {

@@ -8,6 +8,9 @@ import { formatMonth } from '../../util/format-month'
 
 const asString = (v?: string): string => v ?? ''
 
+/** Minimum horizontal travel (px) to register a swipe as a photo change. */
+const SWIPE_MIN_PX = 45
+
 @Component({
   selector: 'app-photo-detail',
   host: {
@@ -106,6 +109,25 @@ export class PhotoDetail {
     if (event.key === 'ArrowRight') this.step(1)
     else if (event.key === 'ArrowLeft') this.step(-1)
     else if (event.key === 'Escape') this.close()
+  }
+
+  private touchStartX = 0
+  private touchStartY = 0
+
+  protected onTouchStart(event: TouchEvent): void {
+    const t = event.changedTouches[0]
+    this.touchStartX = t.clientX
+    this.touchStartY = t.clientY
+  }
+
+  /** Horizontal flick cycles photos; vertical motion is left for scrolling. */
+  protected onTouchEnd(event: TouchEvent): void {
+    const t = event.changedTouches[0]
+    const dx = t.clientX - this.touchStartX
+    const dy = t.clientY - this.touchStartY
+    if (Math.abs(dx) > SWIPE_MIN_PX && Math.abs(dx) > Math.abs(dy) * 1.5) {
+      this.step(dx < 0 ? 1 : -1) // swipe left → next, right → previous
+    }
   }
 
   private split(v: string): string[] {

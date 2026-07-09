@@ -14,6 +14,8 @@ export interface Photo {
   description: string
   /** Derived CSS gradient placeholder shown behind the image (see util/gradient). */
   grad: string
-  /** Resolved image URL from the CMS media, if any. */
+  /** Resolved image URL at a display-sized format (grid/cover), if any. */
   src?: string
+  /** Higher-res URL (capped at 2000px, not the original) for the full-screen viewer. */
+  srcFull?: string
 }
