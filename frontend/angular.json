@@ -28,7 +28,7 @@
             "server": "src/main.server.ts",
             "outputMode": "server",
             "security": {
-              "allowedHosts": ["localhost"]
+              "allowedHosts": ["localhost", "rbeier.dev", "www.rbeier.dev"]
             },
             "ssr": {
               "entry": "src/server.ts"

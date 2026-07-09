@@ -6,4 +6,6 @@ export interface Album {
   description: string
   /** Editor-chosen cover image URL from the CMS, if set. */
   cover?: string
+  /** Responsive `srcset` for the editor-chosen cover (smaller grid formats). */
+  coverSrcset?: string
 }

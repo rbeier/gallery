@@ -73,6 +73,7 @@ export class GalleryService {
         ...a,
         count: photos.length,
         cover: a.cover ?? photos[0]?.src,
+        coverSrcset: a.cover ? a.coverSrcset : photos[0]?.srcset,
         grad: photos[0]?.grad,
       }
     })

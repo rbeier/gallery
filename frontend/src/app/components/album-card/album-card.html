@@ -1,4 +1,6 @@
 <a
+  appInViewport
+  #vp="inViewport"
   [routerLink]="['/albums', album().id]"
   class="block focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"
 >
@@ -7,9 +9,11 @@
     style="aspect-ratio: 4/3"
     [style.background]="album().grad"
   >
-    @if (album().cover; as cover) {
+    @if (vp.visible() && album().cover; as cover) {
       <img
         [src]="cover"
+        [attr.srcset]="album().coverSrcset"
+        sizes="(min-width:880px) 33vw, 50vw"
         alt=""
         loading="lazy"
         decoding="async"

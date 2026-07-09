@@ -83,14 +83,17 @@
     </a>
   </div>
 
-  <div role="tabpanel">
-    @switch (tab()) {
-      @case ('photos') {
-        <app-photo-grid [photos]="gallery.allPhotos()" [linkParams]="{ from: 'all' }" />
-      }
-      @case ('albums') {
-        <app-album-grid [albums]="gallery.albums()" />
-      }
+  <!-- Each grid is created on first visit (@if) then kept in the DOM and just
+       hidden ([hidden]) — so tabs don't re-request images on switch, and a tab
+       that starts hidden doesn't load anything until it's opened. -->
+  <div role="tabpanel" [hidden]="tab() !== 'photos'">
+    @if (photosSeen()) {
+      <app-photo-grid [photos]="gallery.allPhotos()" [linkParams]="{ from: 'all' }" />
+    }
+  </div>
+  <div role="tabpanel" [hidden]="tab() !== 'albums'">
+    @if (albumsSeen()) {
+      <app-album-grid [albums]="gallery.albums()" />
     }
   </div>
 </app-content-shell>

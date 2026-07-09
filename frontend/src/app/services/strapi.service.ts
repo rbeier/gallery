@@ -126,6 +126,7 @@ export class StrapiService {
       description: p.description ?? '',
       grad: gradientFor(p.id),
       src: this.imageUrl(p.image),
+      srcset: this.gridSrcset(p.image),
       srcFull: this.viewerUrl(p.image),
     }
   }
@@ -136,6 +137,7 @@ export class StrapiService {
       name: a.name,
       description: a.description ?? '',
       cover: this.imageUrl(a.cover),
+      coverSrcset: this.gridSrcset(a.cover),
     }
   }
 
@@ -144,6 +146,19 @@ export class StrapiService {
     if (!media) return undefined
     const rel = media.formats?.['large']?.url ?? media.formats?.['medium']?.url ?? media.url
     return this.absolute(rel)
+  }
+
+  /**
+   * Responsive `srcset` of the smaller grid-sized formats so a small tile fetches
+   * a small image instead of the full display format. Ordered smallest→largest;
+   * omits the viewer-sized formats (xlarge/original).
+   */
+  private gridSrcset(media: StrapiMedia | null): string | undefined {
+    if (!media?.formats) return undefined
+    const entries = GRID_FORMATS.map((k) => media.formats?.[k])
+      .filter((f): f is StrapiFormat => !!f && f.width != null)
+      .map((f) => `${this.absolute(f.url)} ${f.width}w`)
+    return entries.length ? entries.join(', ') : undefined
   }
 
   /**
@@ -171,6 +186,9 @@ export class StrapiService {
 
 /** Hard cap on the viewer image width — keeps the full-resolution original private. */
 const VIEWER_MAX_WIDTH = 2000
+
+/** Strapi formats used for grid `srcset`, smallest→largest (no viewer-sized ones). */
+const GRID_FORMATS = ['thumbnail', 'small', 'medium', 'large'] as const
 
 /** Aspect ratio (width / height) derived from the image's own dimensions. */
 function ratioOf(media: StrapiMedia | null): number {

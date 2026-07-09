@@ -16,6 +16,8 @@ export interface Photo {
   grad: string
   /** Resolved image URL at a display-sized format (grid/cover), if any. */
   src?: string
+  /** Responsive `srcset` of smaller grid formats (thumbnail…large) with widths. */
+  srcset?: string
   /** Higher-res URL (capped at 2000px, not the original) for the full-screen viewer. */
   srcFull?: string
 }

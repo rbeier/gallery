@@ -1,9 +1,14 @@
-<div class="flex items-start gap-[14px]">
-  @for (col of columns(); track $index) {
-    <div class="flex min-w-0 flex-1 flex-col gap-[14px]">
-      @for (photo of col.items; track photo.id) {
-        <app-photo-tile [photo]="photo" [linkParams]="linkParams()" />
-      }
-    </div>
+<!--
+  CSS multi-column masonry: the column count is driven by CSS breakpoints (2 /
+  3 / 4), so it's correct on the very first paint with no JS measurement — no
+  reflow from 3→2 columns after hydration.
+-->
+<div class="columns-2 gap-[14px] d:columns-3 w:columns-4">
+  @for (photo of photos(); track photo.id) {
+    <app-photo-tile
+      class="mb-[14px] block break-inside-avoid"
+      [photo]="photo"
+      [linkParams]="linkParams()"
+    />
   }
 </div>

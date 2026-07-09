@@ -1,4 +1,6 @@
 <a
+  appInViewport
+  #vp="inViewport"
   [routerLink]="['/photo', photo().id]"
   [queryParams]="linkParams()"
   [attr.aria-label]="photo().title + ' — ' + photo().meta"
@@ -9,9 +11,11 @@
     [style.aspect-ratio]="photo().ratio"
     [style.background]="photo().grad"
   >
-    @if (photo().src; as src) {
+    @if (vp.visible() && photo().src; as src) {
       <img
         [src]="src"
+        [attr.srcset]="photo().srcset"
+        sizes="(min-width:1300px) 25vw, (min-width:880px) 33vw, 50vw"
         alt=""
         loading="lazy"
         decoding="async"

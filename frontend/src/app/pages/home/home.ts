@@ -26,10 +26,20 @@ export class Home {
   /** Active tab is mirrored in the `tab` query param so it survives back/forward. */
   protected readonly tab = signal<Tab>(toTab(this.route.snapshot.queryParamMap.get('tab')))
 
+  // A tab's grid is created on first visit and then kept alive (see [hidden] in
+  // the template). Latching creation means a tab that starts hidden doesn't build
+  // its grid — and doesn't request images — until the user actually opens it. It
+  // also lets each tile's IntersectionObserver start while the grid is visible.
+  protected readonly photosSeen = signal(false)
+  protected readonly albumsSeen = signal(false)
+
   constructor() {
-    this.route.queryParamMap
-      .pipe(takeUntilDestroyed())
-      .subscribe((m) => this.tab.set(toTab(m.get('tab'))))
+    this.route.queryParamMap.pipe(takeUntilDestroyed()).subscribe((m) => {
+      const tab = toTab(m.get('tab'))
+      this.tab.set(tab)
+      if (tab === 'photos') this.photosSeen.set(true)
+      else this.albumsSeen.set(true)
+    })
 
     inject(SeoService).set(
       `${this.gallery.photographer} — Photography`,
