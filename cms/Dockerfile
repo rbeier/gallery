@@ -37,14 +37,12 @@ COPY package.json package-lock.json ./
 RUN --mount=type=cache,target=/root/.npm \
     npm ci --omit=dev
 
-# Copy compiled files, config structure, database folder, and built admin panel from build stage
+# Copy compiled files and built admin panel from build stage
 COPY --from=build /app/dist ./dist
-COPY --from=build /app/config ./config
-COPY --from=build /app/database ./database
 COPY --from=build /app/.strapi ./.strapi
 COPY --from=build /app/public ./public
-# Copy package.json to the run context
-COPY package.json ./
+# Copy package.json and tsconfig.json to enable TypeScript mode detection at runtime
+COPY package.json tsconfig.json ./
 
 EXPOSE 1337
 
