@@ -2,7 +2,8 @@
 FROM node:24-alpine AS build
 
 # Install build dependencies for native Node modules (e.g., better-sqlite3)
-RUN apk update && apk add --no-cache \
+RUN --mount=type=cache,target=/var/cache/apk \
+    apk update && apk add --no-cache \
     build-base \
     gcc \
     autoconf \
@@ -18,7 +19,8 @@ RUN apk update && apk add --no-cache \
 WORKDIR /app
 
 COPY package.json package-lock.json ./
-RUN npm ci
+RUN --mount=type=cache,target=/root/.npm \
+    npm ci
 
 COPY . .
 ENV NODE_ENV=production
@@ -32,7 +34,8 @@ WORKDIR /app
 
 # Install only production dependencies
 COPY package.json package-lock.json ./
-RUN npm ci --omit=dev
+RUN --mount=type=cache,target=/root/.npm \
+    npm ci --omit=dev
 
 # Copy compiled files and built admin panel from build stage
 COPY --from=build /app/dist ./dist
