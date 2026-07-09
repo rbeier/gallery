@@ -7,6 +7,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#f5f2ea" media="(prefers-color-scheme: light)" />
     <meta name="theme-color" content="#17140f" media="(prefers-color-scheme: dark)" />
+    <!-- Apply a stored theme choice before first paint to avoid a flash. Runs
+         synchronously in <head>; no cookie, purely client-side localStorage. -->
+    <script>
+      (function () {
+        try {
+          var t = localStorage.getItem('theme')
+          if (t === 'dark' || t === 'light') {
+            document.documentElement.setAttribute('data-theme', t)
+          }
+        } catch (e) {}
+      })()
+    </script>
     <link rel="icon" type="image/x-icon" href="favicon.ico" />
     <link rel="manifest" href="manifest.webmanifest" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
