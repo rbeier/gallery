@@ -1,1 +1,11 @@
-/* Styling is handled by Tailwind utility classes in the template. */
+/* Styling is handled by Tailwind utility classes in the template, except the
+   sliding tab underline: its position is driven here (not via an Angular style
+   binding) so change detection can't restart the transition mid-slide. */
+.tab-underline {
+  left: 0;
+  transition: left 0.3s ease;
+}
+
+[data-active="albums"] .tab-underline {
+  left: 50%;
+}

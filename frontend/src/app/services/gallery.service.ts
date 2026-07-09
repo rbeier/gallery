@@ -87,7 +87,7 @@ export class GalleryService {
   }
 
   stat(): string {
-    return `${this.data.photos.length} images · ${this.data.albums.length} portfolios`
+    return `${this.data.photos.length} images · ${this.data.albums.length} albums`
   }
 
   facets(): FacetGroup[] {

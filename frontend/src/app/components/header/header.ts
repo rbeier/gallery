@@ -1,11 +1,11 @@
 import { Component, inject } from '@angular/core'
-import { RouterLink, RouterLinkActive } from '@angular/router'
-import { GalleryService } from '../../services/gallery.service'
+import { RouterLink } from '@angular/router'
+import { Brand } from '../brand/brand'
 import { ThemeService } from '../../services/theme.service'
 
 @Component({
   selector: 'app-header',
-  imports: [RouterLink, RouterLinkActive],
+  imports: [RouterLink, Brand],
   host: {
     class:
       'sticky top-0 z-30 flex h-[58px] items-center border-b border-line bg-bg ' +
@@ -16,5 +16,4 @@ import { ThemeService } from '../../services/theme.service'
 })
 export class Header {
   protected readonly theme = inject(ThemeService)
-  protected readonly gallery = inject(GalleryService)
 }

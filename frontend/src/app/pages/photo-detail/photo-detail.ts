@@ -1,5 +1,6 @@
 import { Component, computed, effect, inject, input } from '@angular/core'
 import { Router } from '@angular/router'
+import { Brand } from '../../components/brand/brand'
 import type { AlbumId } from '../../models/album-id'
 import type { PhotoView } from '../../models/photo-view'
 import { GalleryService } from '../../services/gallery.service'
@@ -13,6 +14,7 @@ const SWIPE_MIN_PX = 45
 
 @Component({
   selector: 'app-photo-detail',
+  imports: [Brand],
   host: {
     class: 'block',
     '(window:keydown)': 'onKey($event)',
@@ -69,7 +71,7 @@ export class PhotoDetail {
       { key: 'Lens', value: p.lens },
       { key: 'Location', value: p.location },
       { key: 'Date', value: formatMonth(p.date) },
-      { key: 'Portfolio', value: this.gallery.albumName(p.album) },
+      { key: 'Album', value: this.gallery.albumName(p.album) },
     ]
   })
 

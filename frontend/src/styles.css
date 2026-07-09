@@ -16,6 +16,7 @@
   --color-line: rgb(var(--line));
   --color-chip: rgb(var(--chip));
   --color-viewer-mat: rgb(var(--viewer-mat));
+  --color-accent: rgb(var(--accent));
 
   --font-serif: "Newsreader", Georgia, serif;
   --font-sans: system-ui, -apple-system, "Segoe UI", sans-serif;
@@ -83,6 +84,7 @@
   --line: 221 216 206;
   --chip: 236 230 218;
   --viewer-mat: 231 227 217; /* #e7e3d9 matte behind the photo */
+  --accent: 178 78 45; /* #b24e2d warm terracotta */
 }
 
 @media (prefers-color-scheme: dark) {
@@ -94,6 +96,7 @@
     --line: 48 44 37;
     --chip: 40 37 30;
     --viewer-mat: 12 10 6; /* #0c0a06 */
+    --accent: 214 106 66; /* #d66a42 brighter terracotta for dark bg */
   }
 }
 
@@ -105,6 +108,7 @@
   --line: 48 44 37;
   --chip: 40 37 30;
   --viewer-mat: 12 10 6;
+  --accent: 214 106 66;
 }
 
 * {

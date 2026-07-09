@@ -6,10 +6,6 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/home/home').then((m) => m.Home),
   },
   {
-    path: 'albums',
-    loadComponent: () => import('./pages/albums/albums').then((m) => m.Albums),
-  },
-  {
     path: 'albums/:albumId',
     loadComponent: () => import('./pages/album-detail/album-detail').then((m) => m.AlbumDetail),
   },
