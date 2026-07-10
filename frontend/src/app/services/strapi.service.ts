@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http'
 import { inject, Injectable } from '@angular/core'
 import { firstValueFrom } from 'rxjs'
-import { STRAPI_BASE_URL } from '../config/strapi.config'
+import { STRAPI_BASE_URL, STRAPI_MEDIA_URL } from '../config/strapi.config'
 import type { Album } from '../models/album'
 import type { AlbumId } from '../models/album-id'
 import type { GalleryData } from '../models/gallery-data'
@@ -61,6 +61,7 @@ interface StrapiGlobal {
 export class StrapiService {
   private readonly http = inject(HttpClient)
   private readonly base = inject(STRAPI_BASE_URL)
+  private readonly mediaBase = inject(STRAPI_MEDIA_URL)
 
   /** Fetch the full dataset the frontend renders in one shot. */
   async fetchGallery(): Promise<GalleryData> {
@@ -179,8 +180,13 @@ export class StrapiService {
     return this.imageUrl(media)
   }
 
+  /**
+   * Resolve a Strapi media path to a browser-facing URL. Uses {@link mediaBase}
+   * (public/relative), never the internal API base, so SSR does not bake the
+   * unreachable container host (cms:1337) into rendered <img> tags.
+   */
   private absolute(rel: string): string {
-    return rel.startsWith('http') ? rel : `${this.base}${rel}`
+    return rel.startsWith('http') ? rel : `${this.mediaBase}${rel}`
   }
 }
 
