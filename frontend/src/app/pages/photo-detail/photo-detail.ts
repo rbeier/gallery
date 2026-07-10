@@ -1,6 +1,7 @@
 import { Component, computed, effect, inject, input } from '@angular/core'
-import { Router } from '@angular/router'
+import { Router, RouterLink } from '@angular/router'
 import { Brand } from '../../components/brand/brand'
+import { Header } from '../../components/header/header'
 import type { AlbumId } from '../../models/album-id'
 import type { PhotoView } from '../../models/photo-view'
 import { GalleryService } from '../../services/gallery.service'
@@ -14,7 +15,7 @@ const SWIPE_MIN_PX = 45
 
 @Component({
   selector: 'app-photo-detail',
-  imports: [Brand],
+  imports: [Brand, Header, RouterLink],
   host: {
     class: 'block',
     '(window:keydown)': 'onKey($event)',
@@ -64,14 +65,20 @@ export class PhotoDetail {
     return 'All photographs'
   })
 
-  protected readonly metaRows = computed(() => {
+  protected readonly metaRows = computed<
+    { key: string; value: string; link?: (string | AlbumId)[] }[]
+  >(() => {
     const p = this.photo()
     if (!p) return []
     return [
       { key: 'Lens', value: p.lens },
       { key: 'Location', value: p.location },
       { key: 'Date', value: formatMonth(p.date) },
-      { key: 'Album', value: this.gallery.albumName(p.album) },
+      {
+        key: 'Album',
+        value: this.gallery.albumName(p.album),
+        link: p.album ? ['/albums', p.album] : undefined,
+      },
     ]
   })
 
