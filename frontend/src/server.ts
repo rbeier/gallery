@@ -29,7 +29,10 @@ const angularApp = new AngularNodeAppEngine()
  */
 app.use(
   express.static(browserDistFolder, {
+    // Build output is content-hashed (outputHashing: "all"), so a given URL
+    // never changes its bytes — cache hard and skip revalidation.
     maxAge: '1y',
+    immutable: true,
     index: false,
     redirect: false,
   }),

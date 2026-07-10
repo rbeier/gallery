@@ -33,6 +33,16 @@ const config = ({ env }: Core.Config.Shared.ConfigParams): Core.Config.Plugin =>
   },
   upload: {
     config: {
+      // Serve uploaded media with a long, immutable cache. Filenames carry a
+      // hash and never mutate in place (a replaced file gets a new name), so a
+      // 1-year immutable cache is safe. maxage is in milliseconds (koa-static).
+      // Without this, uploads default to max-age=0 (effectively uncached).
+      providerOptions: {
+        localServer: {
+          maxage: 31_536_000_000, // 1 year
+          immutable: true,
+        },
+      },
       // Cap the largest generated format at 2000px so the public viewer never
       // serves the full-resolution original (protects against high-res theft).
       // Overrides Strapi's default breakpoints; `xlarge` is the addition.
