@@ -1,6 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import type { Core } from '@strapi/strapi';
+import { installAvifPipeline } from './lib/avif-pipeline';
 import { ALBUMS, PHOTOGRAPHER } from './seed-data';
 import { generateMeta, locationValue } from './seed-generate';
 
@@ -177,7 +178,9 @@ async function tidyPhotoEditView(strapi: Core.Strapi) {
 }
 
 export default {
-  register(/* { strapi }: { strapi: Core.Strapi } */) {},
+  register({ strapi }: { strapi: Core.Strapi }) {
+    installAvifPipeline(strapi);
+  },
 
   async bootstrap({ strapi }: { strapi: Core.Strapi }) {
     await grantPublicPermissions(strapi);
