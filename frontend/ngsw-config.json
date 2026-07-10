@@ -32,6 +32,13 @@
     "!/admin",
     "!/admin/**",
     "!/api/**",
-    "!/uploads/**"
+    "!/uploads/**",
+    "!/upload",
+    "!/upload/**",
+    "!/content-manager/**",
+    "!/content-type-builder/**",
+    "!/i18n/**",
+    "!/users-permissions/**",
+    "!/google-maps/**"
   ]
 }
