@@ -45,7 +45,10 @@ const config = ({ env }: Core.Config.Shared.ConfigParams): Core.Config.Database 
     },
     sqlite: {
       connection: {
-        filename: path.join(__dirname, '..', '..', env('DATABASE_FILENAME', '.tmp/data.db')),
+        // path.resolve (not join) so an absolute DATABASE_FILENAME like
+        // /data/data.db points at the mounted volume instead of being
+        // concatenated onto the app dir (which lands in the ephemeral layer).
+        filename: path.resolve(__dirname, '..', '..', env('DATABASE_FILENAME', '.tmp/data.db')),
       },
       useNullAsDefault: true,
     },
