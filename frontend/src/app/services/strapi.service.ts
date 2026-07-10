@@ -126,6 +126,7 @@ export class StrapiService {
       ratio: ratioOf(p.image),
       description: p.description ?? '',
       grad: gradientFor(p.id),
+      lqip: this.lqipUrl(p.image),
       src: this.imageUrl(p.image),
       srcset: this.gridSrcset(p.image),
       srcFull: this.viewerUrl(p.image),
@@ -138,6 +139,7 @@ export class StrapiService {
       name: a.name,
       description: a.description ?? '',
       cover: this.imageUrl(a.cover),
+      coverLqip: this.lqipUrl(a.cover),
       coverSrcset: this.gridSrcset(a.cover),
     }
   }
@@ -147,6 +149,12 @@ export class StrapiService {
     if (!media) return undefined
     const rel = media.formats?.['large']?.url ?? media.formats?.['medium']?.url ?? media.url
     return this.absolute(rel)
+  }
+
+  /** Absolute URL of the tiny LQIP placeholder format, if it was generated. */
+  private lqipUrl(media: StrapiMedia | null): string | undefined {
+    const rel = media?.formats?.['lqip']?.url
+    return rel ? this.absolute(rel) : undefined
   }
 
   /**

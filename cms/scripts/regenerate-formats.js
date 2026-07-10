@@ -6,16 +6,39 @@
  * the new sizes (e.g. the 2000px `xlarge` used by the photo viewer).
  *
  * Boots its own Strapi instance and reuses the upload plugin's own image pipeline,
- * so output matches what a fresh upload would produce. The dev server MUST be
- * stopped first — two processes on one SQLite file will lock.
+ * so output matches what a fresh upload would produce. Whatever else has the
+ * SQLite file open MUST be stopped first — two writers on one file will lock.
  *
+ * Dev (full source checkout):
  *   node scripts/regenerate-formats.js
+ *
+ * Production (compiled image, e.g. after adding the `lqip` breakpoint). Run as a
+ * one-off container with the live cms stopped so the DB is free:
+ *   docker compose stop cms
+ *   docker compose run --rm cms node scripts/regenerate-formats.js
+ *   docker compose start cms
  */
 
 const fs = require('node:fs')
 const os = require('node:os')
 const path = require('node:path')
 const { createStrapi, compileStrapi } = require('@strapi/strapi')
+
+/**
+ * Boot a Strapi instance for the script.
+ *
+ * In the production image only the compiled `dist` is shipped (no `src`, no TS
+ * compiler), so boot straight from it — the same path `strapi start` takes. In
+ * a dev checkout `dist` may be absent or stale, so compile the TS sources first.
+ */
+async function boot() {
+  const appDir = process.cwd()
+  const distDir = path.join(appDir, 'dist')
+  if (fs.existsSync(path.join(distDir, 'src', 'index.js'))) {
+    return createStrapi({ appDir, distDir }).load()
+  }
+  return createStrapi(await compileStrapi()).load()
+}
 
 /** Keep only the serializable fields Strapi persists for a format entry. */
 function toFormatEntry(f) {
@@ -34,7 +57,7 @@ function toFormatEntry(f) {
 }
 
 async function main() {
-  const app = await createStrapi(await compileStrapi()).load()
+  const app = await boot()
 
   const imageManip = app.plugin('upload').service('image-manipulation')
   const provider = app.plugin('upload').service('provider')

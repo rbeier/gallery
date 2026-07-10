@@ -11,16 +11,29 @@
     [style.aspect-ratio]="photo().ratio"
     [style.background]="photo().grad"
   >
-    @if (vp.visible() && photo().src; as src) {
-      <img
-        [src]="src"
-        [attr.srcset]="photo().srcset"
-        sizes="(min-width:1300px) 25vw, (min-width:880px) 33vw, 50vw"
-        alt=""
-        loading="lazy"
-        decoding="async"
-        class="absolute inset-0 h-full w-full object-cover transition-transform duration-[400ms] ease-out group-hover:scale-[1.03]"
-      />
+    @if (vp.visible()) {
+      @if (photo().lqip; as lqip) {
+        <img
+          [src]="lqip"
+          alt=""
+          aria-hidden="true"
+          decoding="async"
+          class="absolute inset-0 h-full w-full scale-110 object-cover blur-xl"
+        />
+      }
+      @if (photo().src; as src) {
+        <img
+          [src]="src"
+          [attr.srcset]="photo().srcset"
+          sizes="(min-width:1300px) 25vw, (min-width:880px) 33vw, 50vw"
+          alt=""
+          loading="lazy"
+          decoding="async"
+          (load)="loaded.set(true)"
+          [style.opacity]="loaded() ? 1 : 0"
+          class="absolute inset-0 h-full w-full object-cover transition-[opacity,transform] duration-[400ms] ease-out group-hover:scale-[1.03]"
+        />
+      }
     }
   </div>
   <div

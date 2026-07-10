@@ -52,6 +52,9 @@ const config = ({ env }: Core.Config.Shared.ConfigParams): Core.Config.Plugin =>
         medium: 750,
         small: 500,
         thumbnail: 245,
+        // Tiny placeholder for LQIP blur-up (~24px longest side, <1KB). The
+        // frontend shows it blurred+upscaled until the full image loads.
+        lqip: 24,
       },
       security: {
         allowedTypes: allowedMediaTypes,

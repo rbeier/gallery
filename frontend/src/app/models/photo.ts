@@ -14,6 +14,8 @@ export interface Photo {
   description: string
   /** Derived CSS gradient placeholder shown behind the image (see util/gradient). */
   grad: string
+  /** Tiny (~24px) blurred placeholder for LQIP blur-up, if any. */
+  lqip?: string
   /** Resolved image URL at a display-sized format (grid/cover), if any. */
   src?: string
   /** Responsive `srcset` of smaller grid formats (thumbnail…large) with widths. */

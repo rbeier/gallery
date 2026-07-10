@@ -41,6 +41,9 @@ RUN --mount=type=cache,target=/root/.npm \
 COPY --from=build /app/dist ./dist
 COPY --from=build /app/.strapi ./.strapi
 COPY --from=build /app/public ./public
+# Maintenance scripts (e.g. regenerate-formats.js), run as one-off containers.
+# They boot from the compiled dist, so no source or TS compiler is needed.
+COPY scripts ./scripts
 # Copy package.json and tsconfig.json to enable TypeScript mode detection at runtime
 COPY package.json tsconfig.json ./
 
