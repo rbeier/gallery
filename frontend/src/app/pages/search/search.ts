@@ -1,5 +1,5 @@
 import { Component, computed, inject, input } from '@angular/core'
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router'
 import { ContentShell } from '../../components/content-shell/content-shell'
 import { FacetGroup } from '../../components/facet-group/facet-group'
 import { PhotoGrid } from '../../components/photo-grid/photo-grid'
@@ -16,34 +16,32 @@ const asString = (v?: string): string => v ?? ''
 
 @Component({
   selector: 'app-search',
-  imports: [ContentShell, FacetGroup, PhotoGrid],
+  imports: [RouterLink, ContentShell, FacetGroup, PhotoGrid],
   templateUrl: './search.html',
   styleUrl: './search.css',
 })
 export class Search {
   // Query-param inputs (require withComponentInputBinding).
-  readonly q = input('', { transform: asString });
-  readonly tag = input('', { transform: asString });
-  readonly place = input('', { transform: asString });
-  readonly year = input('', { transform: asString });
+  readonly q = input('', { transform: asString })
+  readonly tag = input('', { transform: asString })
+  readonly place = input('', { transform: asString })
+  readonly year = input('', { transform: asString })
 
-  protected readonly gallery = inject(GalleryService);
-  private readonly router = inject(Router);
+  protected readonly gallery = inject(GalleryService)
+  private readonly router = inject(Router)
 
   private readonly filters = computed<SearchFilters>(() => ({
     q: this.q(),
     tag: splitParam(this.tag()),
     place: splitParam(this.place()),
     year: splitParam(this.year()),
-  }));
+  }))
 
-  protected readonly results = computed(() =>
-    this.gallery.search(this.filters()),
-  );
+  protected readonly results = computed(() => this.gallery.search(this.filters()))
   protected readonly resultLabel = computed(() => {
-    const n = this.results().length;
-    return `${n} ${n === 1 ? 'result' : 'results'}`;
-  });
+    const n = this.results().length
+    return `${n} ${n === 1 ? 'result' : 'results'}`
+  })
 
   protected readonly linkParams = computed(() => ({
     from: 'search',
@@ -51,17 +49,17 @@ export class Search {
     tag: this.tag() || null,
     place: this.place() || null,
     year: this.year() || null,
-  }));
+  }))
 
   constructor() {
     inject(SeoService).set(
       `Search — ${this.gallery.photographer}`,
       'Search and filter the photograph library by text, tag, place, and year.',
-    );
+    )
   }
 
   protected selectedFor(kind: FacetKind): string[] {
-    return splitParam(this[kind]());
+    return splitParam(this[kind]())
   }
 
   protected onQuery(value: string): void {
@@ -69,17 +67,15 @@ export class Search {
       queryParams: { q: value || null },
       queryParamsHandling: 'merge',
       replaceUrl: true,
-    });
+    })
   }
 
   protected toggle(kind: FacetKind, value: string): void {
-    const current = this.selectedFor(kind);
-    const next = current.includes(value)
-      ? current.filter((x) => x !== value)
-      : [...current, value];
+    const current = this.selectedFor(kind)
+    const next = current.includes(value) ? current.filter((x) => x !== value) : [...current, value]
     this.router.navigate([], {
       queryParams: { [kind]: next.length ? next.join(',') : null },
       queryParamsHandling: 'merge',
-    });
+    })
   }
 }

@@ -7,7 +7,7 @@ import type { GalleryData } from '../models/gallery-data'
 import type { PhotoView } from '../models/photo-view'
 import type { Profile } from '../models/profile'
 import type { SearchFilters } from '../models/search-filters'
-
+import { shortLocation } from '../util/short-location'
 import { toView } from '../util/to-view'
 import { StrapiService } from './strapi.service'
 
@@ -100,7 +100,7 @@ export class GalleryService {
       {
         kind: 'place',
         label: 'Place',
-        options: uniq(photos.map((p) => p.location)).filter(Boolean).sort(),
+        options: uniq(photos.map((p) => shortLocation(p.location))).sort(),
       },
       {
         kind: 'year',
@@ -123,7 +123,7 @@ export class GalleryService {
           if (!hay.includes(q)) return false
         }
         if (filters.tag.length && !p.tags.some((t) => filters.tag.includes(t))) return false
-        if (filters.place.length && !filters.place.includes(p.location)) return false
+        if (filters.place.length && !filters.place.includes(shortLocation(p.location))) return false
         if (filters.year.length && !filters.year.includes(p.date.split('-')[0])) return false
         return true
       })
