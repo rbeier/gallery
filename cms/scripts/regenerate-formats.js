@@ -33,11 +33,14 @@ const { createStrapi, compileStrapi } = require('@strapi/strapi')
  */
 async function boot() {
   const appDir = process.cwd()
-  const distDir = path.join(appDir, 'dist')
-  if (fs.existsSync(path.join(distDir, 'src', 'index.js'))) {
-    return createStrapi({ appDir, distDir }).load()
+  // Prefer compiling from source when it exists (dev checkout) so the run always
+  // reflects the latest code — booting a possibly-stale `dist` silently drops
+  // recent changes. The production image ships only `dist` (no `src`/compiler),
+  // so fall back to booting straight from the prebuilt dist there.
+  if (fs.existsSync(path.join(appDir, 'src', 'index.ts'))) {
+    return createStrapi(await compileStrapi()).load()
   }
-  return createStrapi(await compileStrapi()).load()
+  return createStrapi({ appDir, distDir: path.join(appDir, 'dist') }).load()
 }
 
 /** Keep only the serializable fields Strapi persists for a format entry. */

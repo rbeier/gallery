@@ -46,12 +46,14 @@ const config = ({ env }: Core.Config.Shared.ConfigParams): Core.Config.Plugin =>
       // Cap the largest generated format at 2000px so the public viewer never
       // serves the full-resolution original (protects against high-res theft).
       // Overrides Strapi's default breakpoints; `xlarge` is the addition.
+      // NB: do not add a `thumbnail` breakpoint here — it collides with Strapi's
+      // built-in thumbnail (generated separately, and the one that carries the
+      // inline LQIP placeholder), overwriting it without the placeholder.
       breakpoints: {
         xlarge: 2000,
         large: 1000,
         medium: 750,
         small: 500,
-        thumbnail: 245,
       },
       security: {
         allowedTypes: allowedMediaTypes,

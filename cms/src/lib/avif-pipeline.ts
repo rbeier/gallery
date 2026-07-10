@@ -138,6 +138,9 @@ export function installAvifPipeline(strapi: Core.Strapi): void {
 
     const results: { key: string; file: unknown }[] = [];
     for (const key of Object.keys(breakpoints)) {
+      // `thumbnail` is owned by generateThumbnail (it carries the LQIP
+      // placeholder); never let a breakpoint of the same name overwrite it.
+      if (key === 'thumbnail') continue;
       const breakpoint = breakpoints[key];
       if (breakpoint < (width ?? 0) || breakpoint < (height ?? 0)) {
         results.push({
