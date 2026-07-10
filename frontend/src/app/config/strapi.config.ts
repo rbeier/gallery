@@ -37,11 +37,14 @@ export const STRAPI_MEDIA_URL = new InjectionToken<string>('STRAPI_MEDIA_URL', {
   providedIn: 'root',
   factory: () => {
     const platformId = inject(PLATFORM_ID)
+    // In dev there is no reverse proxy, so relative /uploads paths would hit the
+    // ng-serve host and 302. Point straight at the local backend instead.
+    if (isDevMode()) return 'http://localhost:1337'
     if (isPlatformServer(platformId)) {
       // Public URL if given (cross-domain media host), else relative to origin.
       return process.env['STRAPI_PUBLIC_URL'] || ''
     }
-    // Browser: always origin-relative — the visitor is already on the public domain.
+    // Browser: origin-relative — the visitor is already on the public domain.
     return ''
   },
 })
