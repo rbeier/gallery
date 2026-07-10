@@ -26,8 +26,10 @@
       "inversedBy": "photos"
     },
     "location": {
-      "type": "customField",
-      "customField": "plugin::google-maps.location-picker"
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::location.location",
+      "inversedBy": "photos"
     },
     "date": {
       "type": "date"

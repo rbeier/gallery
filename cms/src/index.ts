@@ -3,7 +3,7 @@ import path from 'node:path';
 import type { Core } from '@strapi/strapi';
 import { installAvifPipeline } from './lib/avif-pipeline';
 import { ALBUMS, PHOTOGRAPHER } from './seed-data';
-import { generateMeta, locationValue } from './seed-generate';
+import { generateMeta } from './seed-generate';
 
 /** Read actions the public role needs so the Angular frontend can fetch data. */
 const PUBLIC_ACTIONS = [
@@ -15,6 +15,8 @@ const PUBLIC_ACTIONS = [
   'api::tag.tag.findOne',
   'api::lens.lens.find',
   'api::lens.lens.findOne',
+  'api::location.location.find',
+  'api::location.location.findOne',
   'api::global.global.find',
 ];
 
@@ -108,6 +110,12 @@ async function seedContent(strapi: Core.Strapi) {
     lensIdByName.set(name, lens.documentId);
   }
 
+  const locationIdByName = new Map<string, string>();
+  for (const name of new Set(metas.map((m) => m.location))) {
+    const location = await strapi.documents('api::location.location').create({ data: { name } });
+    locationIdByName.set(name, location.documentId);
+  }
+
   // Default each album cover to the first image assigned to it; editors can
   // change the cover later in the admin.
   const coverBySlug = new Map<string, number>();
@@ -122,7 +130,7 @@ async function seedContent(strapi: Core.Strapi) {
     await strapi.documents('api::photo.photo').create({
       data: {
         ...meta,
-        location: locationValue(meta.location),
+        location: locationIdByName.get(meta.location)!,
         lens: lensIdByName.get(meta.lens)!,
         tags: meta.tags.map((name) => tagIdByName.get(name)!),
         image: media.id,

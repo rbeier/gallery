@@ -31,27 +31,6 @@ const PLACES = [
   'Tarifa, ES', 'Málaga, ES', 'Sierra Nevada, ES', 'Córdoba, ES', 'Setenil, ES',
 ];
 
-const PLACE_COORDS: Record<string, { lat: number; lng: number }> = {
-  'Andalusia, ES': { lat: 37.5443, lng: -4.7278 },
-  'Ronda, ES': { lat: 36.746, lng: -5.1611 },
-  'Seville, ES': { lat: 37.3891, lng: -5.9845 },
-  'Grazalema, ES': { lat: 36.7597, lng: -5.3656 },
-  'Cádiz, ES': { lat: 36.5271, lng: -6.2886 },
-  'Tarifa, ES': { lat: 36.0143, lng: -5.6044 },
-  'Málaga, ES': { lat: 36.7213, lng: -4.4213 },
-  'Sierra Nevada, ES': { lat: 37.0954, lng: -3.3986 },
-  'Córdoba, ES': { lat: 37.8882, lng: -4.7794 },
-  'Setenil, ES': { lat: 36.8641, lng: -5.1806 },
-};
-
-/** Build the JSON value the google-maps location-picker custom field stores. */
-export function locationValue(address: string) {
-  return {
-    address,
-    coordinates: PLACE_COORDS[address] ?? { lat: 0, lng: 0 },
-  };
-}
-
 const LENSES = ['24mm', '28mm', '35mm', '50mm', '18mm'];
 
 const TAGS = [

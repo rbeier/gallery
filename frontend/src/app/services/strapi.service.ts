@@ -43,7 +43,7 @@ interface StrapiPhoto {
   id: number
   title: string
   lens: { name: string } | null
-  location: { address?: string } | null
+  location: { name: string } | null
   date: string | null
   tags: { name: string }[] | null
   description: string | null
@@ -73,6 +73,7 @@ export class StrapiService {
           params: {
             'populate[album][fields][0]': 'slug',
             'populate[lens][fields][0]': 'name',
+            'populate[location][fields][0]': 'name',
             'populate[tags][fields][0]': 'name',
             'populate[image][fields][0]': 'url',
             'populate[image][fields][1]': 'formats',
@@ -122,7 +123,7 @@ export class StrapiService {
       title: p.title,
       album: (p.album?.slug ?? '') as AlbumId,
       lens: p.lens?.name ?? '',
-      location: p.location?.address ?? '',
+      location: p.location?.name ?? '',
       date: p.date ?? '',
       tags: (p.tags ?? []).map((t) => t.name),
       ratio: ratioOf(p.image),
