@@ -53,6 +53,8 @@ function toFormatEntry(f) {
     size: f.size,
     sizeInBytes: f.sizeInBytes,
     url: f.url,
+    // Inline LQIP blur placeholder (only present on the thumbnail entry).
+    ...(f.placeholder ? { placeholder: f.placeholder } : {}),
   }
 }
 

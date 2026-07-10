@@ -14,7 +14,7 @@ export interface Photo {
   description: string
   /** Derived CSS gradient placeholder shown behind the image (see util/gradient). */
   grad: string
-  /** Tiny (~24px) blurred placeholder for LQIP blur-up, if any. */
+  /** Inline WebP data-URI blur placeholder — painted instantly, no request. */
   lqip?: string
   /** Resolved image URL at a display-sized format (grid/cover), if any. */
   src?: string

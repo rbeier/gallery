@@ -14,6 +14,13 @@ const AVIF_OPTIONS: sharp.AvifOptions = { quality: 50, effort: 4 };
 
 const THUMBNAIL_RESIZE = { width: 245, height: 156, fit: 'inside' } as const;
 
+/**
+ * Inline LQIP placeholder settings. A ~20px WebP is tiny (~120 bytes → ~180-char
+ * data URI) — far smaller than AVIF at this size, where container overhead
+ * dominates. Quality is irrelevant since the frontend shows it heavily blurred.
+ */
+const PLACEHOLDER = { size: 20, quality: 40 } as const;
+
 /** Fallback if the upload plugin's breakpoints config is somehow absent. */
 const DEFAULT_BREAKPOINTS: Record<string, number> = { large: 1000, medium: 750, small: 500 };
 
@@ -31,6 +38,21 @@ interface PipelineFile {
 
 /** Swap any file extension in a display name for `.avif`. */
 const toAvifName = (name: string): string => `${name.replace(/\.[^.]+$/, '')}.avif`;
+
+/**
+ * Build a tiny WebP data URI for the given source, inlined into the API response
+ * so the frontend can paint a blurred placeholder instantly — no extra request,
+ * no file on disk. getStream() is a factory, so re-reading the source is safe.
+ */
+async function placeholderDataUrl(file: PipelineFile): Promise<string> {
+  const input: string | Buffer = file.filepath ?? (await fileUtils.streamToBuffer(file.getStream()));
+  const buffer = await sharp(input)
+    .rotate()
+    .resize({ width: PLACEHOLDER.size, height: PLACEHOLDER.size, fit: 'inside' })
+    .webp({ quality: PLACEHOLDER.quality })
+    .toBuffer();
+  return `data:image/webp;base64,${buffer.toString('base64')}`;
+}
 
 /**
  * Resize `file` and encode the result as AVIF, returning the object shape the upload
@@ -90,10 +112,14 @@ export function installAvifPipeline(strapi: Core.Strapi): void {
       file.height &&
       (file.width > THUMBNAIL_RESIZE.width || file.height > THUMBNAIL_RESIZE.height)
     ) {
-      return encodeAvif(file, THUMBNAIL_RESIZE, {
+      const thumbnail = await encodeAvif(file, THUMBNAIL_RESIZE, {
         name: `thumbnail_${toAvifName(file.name)}`,
         hash: `thumbnail_${file.hash}`,
       });
+      // Carry the inline blur placeholder on the thumbnail entry so it reaches
+      // the frontend via the existing formats populate — no separate file/url.
+      (thumbnail as { placeholder?: string }).placeholder = await placeholderDataUrl(file);
+      return thumbnail;
     }
     return null;
   };

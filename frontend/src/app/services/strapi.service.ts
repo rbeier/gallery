@@ -28,6 +28,8 @@ interface StrapiAlbum {
 interface StrapiFormat {
   url: string
   width: number | null
+  /** Inline WebP data-URI blur placeholder — present only on the thumbnail format. */
+  placeholder?: string
 }
 
 interface StrapiMedia {
@@ -126,7 +128,7 @@ export class StrapiService {
       ratio: ratioOf(p.image),
       description: p.description ?? '',
       grad: gradientFor(p.id),
-      lqip: this.lqipUrl(p.image),
+      lqip: this.blurPlaceholder(p.image),
       src: this.imageUrl(p.image),
       srcset: this.gridSrcset(p.image),
       srcFull: this.viewerUrl(p.image),
@@ -139,7 +141,7 @@ export class StrapiService {
       name: a.name,
       description: a.description ?? '',
       cover: this.imageUrl(a.cover),
-      coverLqip: this.lqipUrl(a.cover),
+      coverLqip: this.blurPlaceholder(a.cover),
       coverSrcset: this.gridSrcset(a.cover),
     }
   }
@@ -151,10 +153,12 @@ export class StrapiService {
     return this.absolute(rel)
   }
 
-  /** Absolute URL of the tiny LQIP placeholder format, if it was generated. */
-  private lqipUrl(media: StrapiMedia | null): string | undefined {
-    const rel = media?.formats?.['lqip']?.url
-    return rel ? this.absolute(rel) : undefined
+  /**
+   * Inline WebP blur placeholder (data URI) carried on the thumbnail format.
+   * Already a data URI, so it needs no host prefix and costs no extra request.
+   */
+  private blurPlaceholder(media: StrapiMedia | null): string | undefined {
+    return media?.formats?.['thumbnail']?.placeholder ?? undefined
   }
 
   /**
