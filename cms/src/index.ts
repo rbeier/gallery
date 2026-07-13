@@ -38,13 +38,10 @@ async function grantPublicPermissions(strapi: Core.Strapi) {
   }
 }
 
-/** Locate the example images shipped alongside the repo. */
+/** Locate the example images shipped with the CMS (absent in production images). */
 function findImageDir(): string | null {
-  const candidates = [
-    path.join(process.cwd(), '..', 'test-data'),
-    path.join(process.cwd(), 'test-data'),
-  ];
-  return candidates.find((dir) => fs.existsSync(dir)) ?? null;
+  const dir = path.join(process.cwd(), 'database', 'seeders');
+  return fs.existsSync(dir) ? dir : null;
 }
 
 /** Upload a single file through the upload plugin; returns the media entity. */

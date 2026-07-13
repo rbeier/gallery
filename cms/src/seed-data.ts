@@ -1,6 +1,6 @@
 /**
  * Static seed content loaded once on bootstrap when the database is empty.
- * Photos are generated from the example images in `test-data/` — see
+ * Photos are generated from the example images in `database/seeders/` — see
  * `seed-generate.ts` and `index.ts`.
  */
 
