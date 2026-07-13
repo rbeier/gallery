@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http'
-import { inject, Injectable } from '@angular/core'
+import { Injectable, inject } from '@angular/core'
 import { firstValueFrom } from 'rxjs'
 import { STRAPI_BASE_URL, STRAPI_MEDIA_URL } from '../config/strapi.config'
 import type { Album } from '../models/album'
@@ -80,7 +80,7 @@ export class StrapiService {
             'populate[image][fields][2]': 'width',
             'populate[image][fields][3]': 'height',
             'pagination[pageSize]': '200',
-            sort: 'id:asc',
+            sort: ['date:desc', 'id:desc'],
           },
         }),
       ),
