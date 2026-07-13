@@ -1,6 +1,13 @@
 <app-content-shell>
   @if (album(); as album) {
     <div class="mb-[clamp(18px,3vw,28px)]">
+      <a
+        routerLink="/"
+        [queryParams]="{ tab: 'albums' }"
+        class="mb-[22px] inline-block font-mono text-[11px] tracking-[.08em] text-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"
+      >
+        ← Albums
+      </a>
       <h1 class="font-serif text-[clamp(30px,5.4vw,48px)] font-normal tracking-[-.015em]">
         {{ album.name }}
       </h1>
