@@ -11,7 +11,7 @@
 # any remaining -wal/-shm sidecars are copied too as a safety net.
 #
 # Usage:
-#   ./scripts/backup.sh
+#   ./cms/scripts/backup.sh
 #
 # Environment variables (all optional):
 #   DATA_DIR      Deployment data root         (default: /opt/rbeier.dev)

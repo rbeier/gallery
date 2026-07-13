@@ -17,7 +17,7 @@ Node is pinned to **24.x** across the repo (`.nvmrc` + `engines`, enforced with 
 ```
 frontend/   Angular app (SSR). Pages: home, album detail, photo detail, search
 cms/        Strapi app. Content types: photo, album, tag, lens, location, global
-scripts/    backup.sh — production backup of CMS database + uploads
+            scripts/backup.sh — production backup of CMS database + uploads
 .github/    deploy.yml — push-to-main deployment workflow
 ```
 
@@ -72,7 +72,7 @@ Every push to `main` triggers [deploy.yml](.github/workflows/deploy.yml): it SSH
 ### Backups
 
 ```sh
-./scripts/backup.sh
+./cms/scripts/backup.sh
 ```
 
 Snapshots the CMS SQLite database (WAL-checkpointed, pulled from the running container via `docker cp`) and the uploads directory into `$DATA_DIR/backups`, keeping 14 days by default. See the script header for the configurable environment variables. Requires the cms container to be running.
@@ -82,7 +82,7 @@ Snapshots the CMS SQLite database (WAL-checkpointed, pulled from the running con
 After changing Strapi's image breakpoint/format configuration, rebuild all derived image sizes:
 
 ```sh
-./scripts/backup.sh   # needs a running container
+./cms/scripts/backup.sh   # needs a running container
 docker compose stop cms
 docker compose run --rm cms node scripts/regenerate-formats.js
 docker compose start cms
