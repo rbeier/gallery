@@ -2,10 +2,6 @@
   <div
     class="flex min-h-screen animate-fade flex-col bg-bg text-ink d:h-screen d:flex-row-reverse d:overflow-hidden"
   >
-    <!-- Mobile only: the normal site header at the top (the sidebar logo below is
-         hidden on mobile). Removed on desktop, keeping the full-bleed viewer. -->
-    <app-header class="d:hidden" />
-
     <!-- Image pane. Mobile fills most of the viewport so the caption panel below
          only peeks in — a hint that there's more on scroll. Desktop fills the full
          row height so portrait photos use the whole viewport. -->
@@ -48,17 +44,21 @@
         type="button"
         (click)="step(-1)"
         aria-label="Previous photograph"
-        class="absolute bottom-4 left-4 z-20 flex h-[46px] w-[46px] items-center justify-center rounded-full border border-line bg-surface text-[18px] text-accent opacity-95 transition-transform active:scale-90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent d:bottom-6 d:left-6"
+        class="absolute bottom-4 left-4 z-20 flex h-[46px] w-[46px] items-center justify-center rounded-full border border-line bg-surface text-accent opacity-95 transition-transform active:scale-90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent d:bottom-6 d:left-6"
       >
-        ←
+        <svg viewBox="0 -960 960 960" aria-hidden="true" class="h-[22px] w-[22px] fill-current">
+          <path d="M560-240 320-480l240-240 56 56-184 184 184 184-56 56Z" />
+        </svg>
       </button>
       <button
         type="button"
         (click)="step(1)"
         aria-label="Next photograph"
-        class="absolute bottom-4 right-4 z-20 flex h-[46px] w-[46px] items-center justify-center rounded-full border border-line bg-surface text-[18px] text-accent opacity-95 transition-transform active:scale-90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent d:bottom-6 d:right-6"
+        class="absolute bottom-4 right-4 z-20 flex h-[46px] w-[46px] items-center justify-center rounded-full border border-line bg-surface text-accent opacity-95 transition-transform active:scale-90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent d:bottom-6 d:right-6"
       >
-        →
+        <svg viewBox="0 -960 960 960" aria-hidden="true" class="h-[22px] w-[22px] fill-current">
+          <path d="M504-480 320-664l56-56 240 240-240 240-56-56 184-184Z" />
+        </svg>
       </button>
     </div>
 

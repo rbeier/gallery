@@ -1,7 +1,6 @@
 import { Component, computed, effect, inject, input } from '@angular/core'
 import { Router, RouterLink } from '@angular/router'
 import { Brand } from '../../components/brand/brand'
-import { Header } from '../../components/header/header'
 import type { AlbumId } from '../../models/album-id'
 import type { PhotoView } from '../../models/photo-view'
 import { GalleryService } from '../../services/gallery.service'
@@ -15,7 +14,7 @@ const SWIPE_MIN_PX = 45
 
 @Component({
   selector: 'app-photo-detail',
-  imports: [Brand, Header, RouterLink],
+  imports: [Brand, RouterLink],
   host: {
     class: 'block',
     '(window:keydown)': 'onKey($event)',
