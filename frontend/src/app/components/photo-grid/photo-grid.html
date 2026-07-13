@@ -1,14 +1,18 @@
 <!--
-  CSS multi-column masonry: the column count is driven by CSS breakpoints (2 /
-  3 / 4), so it's correct on the very first paint with no JS measurement — no
-  reflow from 3→2 columns after hydration.
+  Left-to-right masonry: photos are distributed round-robin across columns in the
+  component (item i -> column i % count), so the newest photo is top-left and the
+  next one sits to its right. Column count tracks the CSS breakpoints (2 / 3 / 4).
 -->
-<div class="columns-2 gap-[14px] d:columns-3 w:columns-4">
-  @for (photo of photos(); track photo.id) {
-    <app-photo-tile
-      class="mb-[14px] block break-inside-avoid"
-      [photo]="photo"
-      [linkParams]="linkParams()"
-    />
+<div class="flex gap-[14px]">
+  @for (column of columns(); track $index) {
+    <div class="flex flex-1 flex-col gap-[14px]">
+      @for (photo of column; track photo.id) {
+        <app-photo-tile
+          class="block"
+          [photo]="photo"
+          [linkParams]="linkParams()"
+        />
+      }
+    </div>
   }
 </div>
