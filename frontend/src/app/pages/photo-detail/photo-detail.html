@@ -67,18 +67,24 @@
       class="flex flex-none animate-rise flex-col overflow-y-auto px-[22px] pt-[26px] pb-[56px] d:w-[320px] d:flex-none d:p-[52px]"
     >
       <app-brand class="mb-[26px] hidden border-b border-line pb-[22px] d:block" />
-      <button
-        type="button"
-        (click)="close()"
-        class="mb-[22px] cursor-pointer self-start border-0 bg-transparent p-0 font-mono text-[11px] tracking-[.08em] text-muted"
+      <div
+        class="mb-[22px] flex items-center justify-between gap-4 d:flex-col d:items-start d:gap-[14px]"
       >
-        ← {{ backLabel() }}
-      </button>
-      <div class="font-mono text-[11px] tracking-[.12em] text-muted">{{ counter() }}</div>
-      <h1 class="mt-[14px] font-serif text-title font-normal">{{ photo.title }}</h1>
-      <p class="mt-4 max-w-[26em] text-[15px] leading-[1.65] text-ink/80">
-        {{ photo.description }}
-      </p>
+        <button
+          type="button"
+          (click)="close()"
+          class="cursor-pointer border-0 bg-transparent p-0 font-mono text-[11px] tracking-[.08em] text-muted"
+        >
+          ← {{ backLabel() }}
+        </button>
+        <div class="font-mono text-[11px] tracking-[.12em] text-muted">{{ counter() }}</div>
+      </div>
+      <h1 class="font-serif text-title font-normal">{{ photo.title }}</h1>
+      @if (photo.description) {
+        <p class="mt-4 max-w-[26em] text-[15px] leading-[1.65] text-ink/80">
+          {{ photo.description }}
+        </p>
+      }
 
       <dl class="mt-7 flex flex-col gap-[15px] border-t border-line pt-[22px]">
         @for (row of metaRows(); track row.key) {
