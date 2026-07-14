@@ -52,10 +52,10 @@ export class Search {
   }))
 
   constructor() {
-    inject(SeoService).set(
-      `Search — ${this.gallery.photographer}`,
-      'Search and filter the photograph library by text, tag, place, and year.',
-    )
+    inject(SeoService).set({
+      title: `Search — ${this.gallery.photographer}`,
+      description: 'Search and filter the photograph library by text, tag, place, and year.',
+    })
   }
 
   protected selectedFor(kind: FacetKind): string[] {

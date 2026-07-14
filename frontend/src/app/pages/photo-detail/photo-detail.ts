@@ -84,7 +84,14 @@ export class PhotoDetail {
   constructor() {
     effect(() => {
       const p = this.photo()
-      if (p) this.seo.set(`${p.title} — ${this.gallery.photographer}`, p.description, 'article')
+      if (p)
+        this.seo.set({
+          title: `${p.title} — ${this.gallery.photographer}`,
+          description: p.description,
+          type: 'article',
+          image: p.srcFull ?? p.src,
+          imageAlt: p.title,
+        })
     })
   }
 

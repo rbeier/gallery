@@ -25,7 +25,12 @@ export class AlbumDetail {
     effect(() => {
       const album = this.album()
       if (album) {
-        this.seo.set(`${album.name} — ${this.gallery.photographer}`, album.description)
+        this.seo.set({
+          title: `${album.name} — ${this.gallery.photographer}`,
+          description: album.description,
+          image: album.cover,
+          imageAlt: album.name,
+        })
       }
     })
   }

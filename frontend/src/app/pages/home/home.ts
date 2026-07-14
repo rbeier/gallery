@@ -41,10 +41,11 @@ export class Home {
       else this.albumsSeen.set(true)
     })
 
-    inject(SeoService).set(
-      `${this.gallery.photographer} — Photography`,
-      this.profile.bio || `A minimalist photography portfolio. ${this.gallery.stat()}.`,
-    )
+    inject(SeoService).set({
+      title: `${this.gallery.photographer} — Photography`,
+      description:
+        this.profile.bio || `A minimalist photography portfolio. ${this.gallery.stat()}.`,
+    })
   }
 
   protected select(tab: Tab): void {
