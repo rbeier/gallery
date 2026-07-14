@@ -72,13 +72,13 @@ export class PhotoDetail {
     return [
       { key: 'Lens', value: p.lens },
       { key: 'Location', value: p.location },
-      { key: 'Date', value: formatMonth(p.date) },
+      { key: 'Date', value: p.date ? formatMonth(p.date) : '' },
       {
         key: 'Album',
         value: this.gallery.albumName(p.album),
         link: p.album ? ['/albums', p.album] : undefined,
       },
-    ]
+    ].filter((row) => row.value)
   })
 
   constructor() {
