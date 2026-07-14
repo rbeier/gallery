@@ -1,5 +1,13 @@
 @import "tailwindcss";
 
+/* Self-hosted fonts (same-origin, latin subset gated by unicode-range) — replaces
+   the Google Fonts two-origin request chain. Newsreader uses the weight-only
+   variable (wght) rather than the opsz+wght "standard" build: ~57 KiB vs ~129 KiB
+   latin, dropping only the optical-size axis. No italic face is used on the site. */
+@import "@fontsource-variable/newsreader/wght.css";
+@import "@fontsource/ibm-plex-mono/400.css";
+@import "@fontsource/ibm-plex-mono/500.css";
+
 /* Explicitly scan app sources (inline component templates live in .ts files). */
 @source "./app/**/*.{ts,html}";
 
@@ -18,7 +26,7 @@
   --color-viewer-mat: rgb(var(--viewer-mat));
   --color-accent: rgb(var(--accent));
 
-  --font-serif: "Newsreader", Georgia, serif;
+  --font-serif: "Newsreader Variable", Georgia, serif;
   --font-sans: system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
 
