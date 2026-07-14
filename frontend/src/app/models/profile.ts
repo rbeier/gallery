@@ -4,6 +4,8 @@ export interface Profile {
   heading: string
   location: string
   bio: string
-  /** Profile picture URL, if set. */
+  /** Profile picture URL (smallest format), if set. */
   avatar?: string
+  /** Responsive `srcset` for the avatar so retina picks a sharper source. */
+  avatarSrcset?: string
 }

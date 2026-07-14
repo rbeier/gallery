@@ -112,7 +112,8 @@ export class StrapiService {
         heading: g?.heading ?? '',
         location: g?.location ?? '',
         bio: g?.bio ?? '',
-        avatar: this.imageUrl(g?.avatar ?? null),
+        avatar: this.avatarUrl(g?.avatar ?? null),
+        avatarSrcset: this.avatarSrcset(g?.avatar ?? null),
       },
     }
   }
@@ -152,6 +153,26 @@ export class StrapiService {
     if (!media) return undefined
     const rel = media.formats?.['large']?.url ?? media.formats?.['medium']?.url ?? media.url
     return this.absolute(rel)
+  }
+
+  /**
+   * URL for the 76px profile avatar. Uses the smallest generated format instead
+   * of {@link imageUrl}'s display-sized `large` — a ~1000px file into a 76px slot
+   * wastes ~99% of the bytes. Retina crispness comes from {@link avatarSrcset}.
+   */
+  private avatarUrl(media: StrapiMedia | null): string | undefined {
+    if (!media) return undefined
+    const rel = media.formats?.['thumbnail']?.url ?? media.formats?.['small']?.url ?? media.url
+    return this.absolute(rel)
+  }
+
+  /** `srcset` of the two smallest formats so a 2x display picks a sharp source. */
+  private avatarSrcset(media: StrapiMedia | null): string | undefined {
+    if (!media?.formats) return undefined
+    const entries = AVATAR_FORMATS.map((k) => media.formats?.[k])
+      .filter((f): f is StrapiFormat => !!f && f.width != null)
+      .map((f) => `${this.absolute(f.url)} ${f.width}w`)
+    return entries.length ? entries.join(', ') : undefined
   }
 
   /**
@@ -208,6 +229,9 @@ const VIEWER_MAX_WIDTH = 2000
 
 /** Strapi formats used for grid `srcset`, smallest→largest (no viewer-sized ones). */
 const GRID_FORMATS = ['thumbnail', 'small', 'medium', 'large'] as const
+
+/** Strapi formats used for the small avatar `srcset` (1x thumbnail, 2x small). */
+const AVATAR_FORMATS = ['thumbnail', 'small'] as const
 
 /** Aspect ratio (width / height) derived from the image's own dimensions. */
 function ratioOf(media: StrapiMedia | null): number {

@@ -4,6 +4,8 @@
       @if (profile.avatar) {
         <img
           [src]="profile.avatar"
+          [attr.srcset]="profile.avatarSrcset"
+          sizes="76px"
           [alt]="profile.name"
           width="76"
           height="76"
