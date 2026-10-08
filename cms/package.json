@@ -40,6 +40,11 @@
     "installId": "a7e12cf5b0bd969e2056c6802b324d717b1e0a2376b3fbb2f5e824ce4915a730"
   },
   "allowScripts": {
+    "@swc/core@1.16.13": true,
+    "better-sqlite3@12.11.1": true,
+    "core-js-pure@3.50.0": true,
+    "fsevents@2.3.3": true,
+    "esbuild@0.28.2": true,
     "esbuild@0.25.12": true
   }
 }
