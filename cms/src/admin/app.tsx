@@ -1,5 +1,5 @@
 import type { StrapiApp } from '@strapi/strapi/admin'
-import { House } from '@strapi/icons'
+import { ExternalLink } from '@strapi/icons'
 import * as React from 'react'
 import { DatePicker, Field, useComposedRefs } from '@strapi/design-system'
 import { useIntl } from 'react-intl'
@@ -90,7 +90,7 @@ export default {
 
     app.addMenuLink({
       to: frontendUrl,
-      icon: House,
+      icon: ExternalLink,
       intlLabel: {
         id: 'app.components.LeftMenu.frontend',
         defaultMessage: 'Website',
