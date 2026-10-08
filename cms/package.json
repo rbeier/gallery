@@ -38,5 +38,8 @@
   "strapi": {
     "uuid": "3c395ce8-818a-42b8-b8a7-601b8883a211",
     "installId": "a7e12cf5b0bd969e2056c6802b324d717b1e0a2376b3fbb2f5e824ce4915a730"
+  },
+  "allowScripts": {
+    "esbuild@0.25.12": true
   }
 }

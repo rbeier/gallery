@@ -56,6 +56,7 @@ Detailed Angular/TypeScript rules live in [frontend/CLAUDE.md](frontend/CLAUDE.m
 - Native control flow (`@if`, `@for`, `@switch`); `class`/`style` bindings instead of `ngClass`/`ngStyle`; host bindings in the `host` object, not decorators.
 - Exactly one exported class/interface/enum per file; models live in `frontend/src/app/models/` as one-type-per-file.
 - Accessibility is a requirement, not a nice-to-have: WCAG AA, passes AXE checks.
+- When writing tests, please use vitest!
 
 ## CMS conventions
 

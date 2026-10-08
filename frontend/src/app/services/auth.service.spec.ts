@@ -16,7 +16,7 @@ describe('AuthService', () => {
     vi.restoreAllMocks()
   })
 
-  describe('in development mode (isDev === true)', () => {
+  describe('in development mode', () => {
     beforeEach(() => {
       vi.spyOn(service, 'isDev').mockReturnValue(true)
       service.check()
