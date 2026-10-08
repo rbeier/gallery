@@ -10,13 +10,13 @@
     <!-- Apply a stored theme choice before first paint to avoid a flash. Runs
          synchronously in <head>; no cookie, purely client-side localStorage. -->
     <script>
-      (function () {
+      (() => {
         try {
-          var t = localStorage.getItem('theme')
+          const t = localStorage.getItem('theme')
           if (t === 'dark' || t === 'light') {
             document.documentElement.setAttribute('data-theme', t)
           }
-        } catch (e) {}
+        } catch {}
       })()
     </script>
     <link rel="icon" type="image/svg+xml" href="icons/logo.svg" />
