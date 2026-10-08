@@ -17,7 +17,10 @@ jobs:
           username: ${{ secrets.VPS_USERNAME }}
           key: ${{ secrets.VPS_SSH_KEY }}
           port: ${{ secrets.VPS_PORT || 22 }}
+          script_stop: true
           script: |
+            set -euo pipefail
+
             # Ensure deployment directory exists
             mkdir -p /opt/rbeier.dev
             cd /opt/rbeier.dev
@@ -35,7 +38,7 @@ jobs:
             mkdir -p cms-data/database cms-data/uploads
 
             # Create or update .env file
-            cat << EOF > .env
+            sed -e 's/^[ \t]*//' << EOF > .env
             CMS_IMAGE=gallery-cms:latest
             FRONTEND_IMAGE=gallery-frontend:latest
             APP_KEYS="${{ secrets.APP_KEYS }}"

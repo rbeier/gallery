@@ -3,7 +3,7 @@ FROM node:24-alpine AS build
 
 WORKDIR /app
 
-COPY package.json package-lock.json ./
+COPY package.json package-lock.json .npmrc* ./
 RUN --mount=type=cache,target=/root/.npm \
     npm ci
 
@@ -17,7 +17,7 @@ FROM node:24-alpine
 WORKDIR /app
 
 # Install only production dependencies
-COPY package.json package-lock.json ./
+COPY package.json package-lock.json .npmrc* ./
 RUN --mount=type=cache,target=/root/.npm \
     npm ci --omit=dev
 
