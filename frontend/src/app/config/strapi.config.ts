@@ -1,5 +1,5 @@
-import { InjectionToken, PLATFORM_ID, inject, isDevMode } from '@angular/core'
 import { isPlatformServer } from '@angular/common'
+import { InjectionToken, inject, isDevMode, PLATFORM_ID } from '@angular/core'
 
 /** Base URL of the Strapi backend. Override in providers to point elsewhere. */
 export const STRAPI_BASE_URL = new InjectionToken<string>('STRAPI_BASE_URL', {

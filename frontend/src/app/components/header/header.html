@@ -7,12 +7,25 @@
 >
   <app-brand />
 
-  <!-- Search link (search is a standalone page) + theme toggle. -->
+  <!-- Search link (search is a standalone page) + theme toggle + optional admin link. -->
   <div class="flex flex-none items-center gap-4">
+    @if (auth.isLoggedIn()) {
+      <a
+        [href]="auth.adminUrl()"
+        aria-label="Admin"
+        class="flex cursor-pointer text-muted visited:text-muted hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+      >
+        <svg viewBox="0 -960 960 960" aria-hidden="true" class="h-[22px] w-[22px] fill-current">
+          <path
+            d="M480-80q-139-35-229.5-159.5T160-516v-244l320-120 320 120v244q0 152-90.5 276.5T480-80Zm0-84q104-33 172-131t68-221v-189l-240-90-240 90v189q0 123 68 221t172 131Zm0-316q33 0 56.5-23.5T560-560q0-33-23.5-56.5T480-640q-33 0-56.5 23.5T400-560q0 33 23.5 56.5T480-480Zm0 160q55 0 101-26.5t67-71.5q-37-17-80.5-26.5T480-454q-44 0-87.5 9.5T312-418q21 45 67 71.5t101 26.5Z"
+          />
+        </svg>
+      </a>
+    }
     <a
       routerLink="/search"
       aria-label="Search"
-      class="cursor-pointer text-muted hover:text-ink"
+      class="flex cursor-pointer text-muted visited:text-muted hover:text-ink"
     >
       <svg viewBox="0 -960 960 960" aria-hidden="true" class="h-[22px] w-[22px] fill-current">
         <path

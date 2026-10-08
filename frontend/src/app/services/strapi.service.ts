@@ -41,6 +41,7 @@ interface StrapiMedia {
 
 interface StrapiPhoto {
   id: number
+  documentId?: string
   title: string
   lens: { name: string } | null
   location: { name: string } | null
@@ -121,6 +122,7 @@ export class StrapiService {
   private mapPhoto(p: StrapiPhoto): Photo {
     return {
       id: p.id,
+      documentId: p.documentId,
       title: p.title,
       album: (p.album?.slug ?? '') as AlbumId,
       lens: p.lens?.name ?? '',

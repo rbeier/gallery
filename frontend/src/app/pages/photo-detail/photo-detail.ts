@@ -3,6 +3,7 @@ import { Router, RouterLink } from '@angular/router'
 import { Brand } from '../../components/brand/brand'
 import type { AlbumId } from '../../models/album-id'
 import type { PhotoView } from '../../models/photo-view'
+import { AuthService } from '../../services/auth.service'
 import { GalleryService } from '../../services/gallery.service'
 import { SeoService } from '../../services/seo.service'
 import { formatMonth } from '../../util/format-month'
@@ -30,6 +31,7 @@ export class PhotoDetail {
   readonly place = input('', { transform: asString })
   readonly year = input('', { transform: asString })
 
+  protected readonly auth = inject(AuthService)
   private readonly gallery = inject(GalleryService)
   private readonly router = inject(Router)
   private readonly seo = inject(SeoService)

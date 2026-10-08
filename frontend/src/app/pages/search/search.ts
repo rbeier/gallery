@@ -1,5 +1,5 @@
 import { Component, computed, inject, input } from '@angular/core'
-import { Router, RouterLink } from '@angular/router'
+import { Router } from '@angular/router'
 import { ContentShell } from '../../components/content-shell/content-shell'
 import { FacetGroup } from '../../components/facet-group/facet-group'
 import { PhotoGrid } from '../../components/photo-grid/photo-grid'
@@ -16,7 +16,7 @@ const asString = (v?: string): string => v ?? ''
 
 @Component({
   selector: 'app-search',
-  imports: [RouterLink, ContentShell, FacetGroup, PhotoGrid],
+  imports: [ContentShell, FacetGroup, PhotoGrid],
   templateUrl: './search.html',
   styleUrl: './search.css',
 })
