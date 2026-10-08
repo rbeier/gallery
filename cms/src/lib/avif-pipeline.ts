@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import type { Core } from '@strapi/strapi';
 import { file as fileUtils } from '@strapi/utils';
-import sharp from 'sharp';
+import sharp, { type AvifOptions, type OutputInfo } from 'sharp';
 
 /**
  * AVIF encoder settings. quality 50 lands ~50% under JPEG q80 on photos while
@@ -10,7 +10,7 @@ import sharp from 'sharp';
  * effort 6/7 gave no meaningful size gain here for 3–4x the encode time, which
  * matters when regenerating every image on the VPS.
  */
-const AVIF_OPTIONS: sharp.AvifOptions = { quality: 50, effort: 4 };
+const AVIF_OPTIONS: AvifOptions = { quality: 50, effort: 4 };
 
 const THUMBNAIL_RESIZE = { width: 245, height: 156, fit: 'inside' } as const;
 
@@ -74,7 +74,7 @@ async function encodeAvif(
     .toFile(filePath);
 
   const { width, height, size } = info;
-  const pageHeight = (info as sharp.OutputInfo & { pageHeight?: number }).pageHeight;
+  const pageHeight = (info as OutputInfo & { pageHeight?: number }).pageHeight;
   return {
     name,
     hash,
