@@ -3,6 +3,7 @@ import type { AlbumId } from './album-id'
 export interface Photo {
   id: number
   documentId?: string
+  slug: string
   title: string
   album: AlbumId
   lens: string

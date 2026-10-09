@@ -4,6 +4,7 @@ import { photoMeta } from './photo-meta'
 
 const photo = (over: Partial<Photo>): Photo => ({
   id: 1,
+  slug: '1',
   title: '',
   album: '' as Photo['album'],
   lens: '',

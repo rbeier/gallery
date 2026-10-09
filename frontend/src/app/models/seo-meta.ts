@@ -11,4 +11,9 @@ export interface SeoMeta {
   image?: string
   /** Alt text for the share image. Defaults to the title. */
   imageAlt?: string
+  /**
+   * Optional canonical path (origin-relative, e.g. '/photo/1-low-tide-cornwall')
+   * for og:url and <link rel="canonical">. Falls back to requested path.
+   */
+  canonicalPath?: string
 }

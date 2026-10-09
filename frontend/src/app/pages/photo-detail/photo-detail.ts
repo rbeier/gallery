@@ -1,4 +1,5 @@
-import { Component, computed, effect, inject, input } from '@angular/core'
+import { isPlatformBrowser, Location } from '@angular/common'
+import { Component, computed, effect, inject, input, PLATFORM_ID } from '@angular/core'
 import { Router, RouterLink } from '@angular/router'
 import { Brand } from '../../components/brand/brand'
 import type { AlbumId } from '../../models/album-id'
@@ -7,6 +8,7 @@ import { AuthService } from '../../services/auth.service'
 import { GalleryService } from '../../services/gallery.service'
 import { SeoService } from '../../services/seo.service'
 import { formatMonth } from '../../util/format-month'
+import { photoIdFromSlug } from '../../util/slug'
 
 const asString = (v?: string): string => v ?? ''
 
@@ -35,6 +37,8 @@ export class PhotoDetail {
   private readonly gallery = inject(GalleryService)
   private readonly router = inject(Router)
   private readonly seo = inject(SeoService)
+  private readonly platformId = inject(PLATFORM_ID)
+  private readonly location = inject(Location)
 
   /** The ordered list the photo was opened from — prev/next cycle this. */
   protected readonly list = computed<PhotoView[]>(() => {
@@ -53,9 +57,13 @@ export class PhotoDetail {
     return this.gallery.allPhotos()
   })
 
-  protected readonly index = computed(() =>
-    this.list().findIndex((p) => p.id === Number(this.id())),
-  )
+  protected readonly index = computed(() => {
+    const param = this.id()
+    const parsedId = photoIdFromSlug(param)
+    return this.list().findIndex(
+      (p) => (parsedId !== null && p.id === parsedId) || p.slug === param,
+    )
+  })
   protected readonly photo = computed(() => this.list()[this.index()])
   protected readonly counter = computed(() => `${this.index() + 1} / ${this.list().length}`)
 
@@ -86,14 +94,21 @@ export class PhotoDetail {
   constructor() {
     effect(() => {
       const p = this.photo()
-      if (p)
+      if (p) {
         this.seo.set({
           title: `${p.title} — ${this.gallery.photographer}`,
           description: p.description,
           type: 'article',
           image: p.srcFull ?? p.src,
           imageAlt: p.title,
+          canonicalPath: `/photo/${p.slug}`,
         })
+
+        if (isPlatformBrowser(this.platformId) && this.id() !== p.slug) {
+          const search = window.location.search || ''
+          this.location.replaceState(`/photo/${p.slug}${search}`)
+        }
+      }
     })
   }
 
@@ -101,7 +116,7 @@ export class PhotoDetail {
     const list = this.list()
     if (!list.length) return
     const next = (this.index() + direction + list.length) % list.length
-    this.router.navigate(['/photo', list[next].id], { queryParamsHandling: 'preserve' })
+    this.router.navigate(['/photo', list[next].slug], { queryParamsHandling: 'preserve' })
   }
 
   protected close(): void {

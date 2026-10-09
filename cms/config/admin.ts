@@ -1,4 +1,5 @@
 import type { Core } from '@strapi/strapi';
+import { photoSlug } from '../src/lib/slug';
 
 const config = ({ env }: Core.Config.Shared.ConfigParams): Core.Config.Admin => {
   // Frontend origin the "Preview" button on an edit page links to. Defaults to
@@ -42,7 +43,7 @@ const config = ({ env }: Core.Config.Shared.ConfigParams): Core.Config.Admin => 
       async handler(uid, { documentId }) {
         if (uid === 'api::photo.photo') {
           const photo = await strapi.documents(uid).findOne({ documentId });
-          return photo ? `${clientUrl}/photo/${photo.id}` : null;
+          return photo ? `${clientUrl}/photo/${photoSlug(photo.id, photo.title)}` : null;
         }
         if (uid === 'api::album.album') {
           const album = await strapi.documents(uid).findOne({ documentId });

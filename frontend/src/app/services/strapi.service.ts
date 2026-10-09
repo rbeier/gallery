@@ -7,6 +7,7 @@ import type { AlbumId } from '../models/album-id'
 import type { GalleryData } from '../models/gallery-data'
 import type { Photo } from '../models/photo'
 import { gradientFor } from '../util/gradient'
+import { photoSlug } from '../util/slug'
 
 /** Strapi v5 REST list envelope. Attributes are flattened onto each entry. */
 interface StrapiList<T> {
@@ -123,6 +124,7 @@ export class StrapiService {
     return {
       id: p.id,
       documentId: p.documentId,
+      slug: photoSlug(p.id, p.title),
       title: p.title,
       album: (p.album?.slug ?? '') as AlbumId,
       lens: p.lens?.name ?? '',

@@ -2,6 +2,7 @@ import type { Album } from '../models/album'
 import type { Photo } from '../models/photo'
 import type { Profile } from '../models/profile'
 import { gradientFor } from '../util/gradient'
+import { photoSlug } from '../util/slug'
 
 export const ALBUMS: Album[] = [
   { id: 'coast', name: 'Coastlines', description: 'Water, salt, and the shifting edges of land.' },
@@ -10,7 +11,7 @@ export const ALBUMS: Album[] = [
   { id: 'mount', name: 'Mountains', description: 'Altitude, weather, and a lot of quiet.' },
 ]
 
-const RAW: Omit<Photo, 'grad'>[] = [
+const RAW: Omit<Photo, 'grad' | 'slug'>[] = [
   {
     id: 1,
     title: 'Low Tide, Cornwall',
@@ -190,7 +191,11 @@ const RAW: Omit<Photo, 'grad'>[] = [
   },
 ]
 
-export const PHOTOS: Photo[] = RAW.map((p) => ({ ...p, grad: gradientFor(p.id) }))
+export const PHOTOS: Photo[] = RAW.map((p) => ({
+  ...p,
+  grad: gradientFor(p.id),
+  slug: photoSlug(p.id, p.title),
+}))
 
 export const PROFILE: Profile = {
   name: 'Robin Beier',

@@ -23,6 +23,7 @@ export class SeoService {
 
     const image = this.absolute(meta.image ?? this.latestPhotoImage())
     const imageAlt = meta.imageAlt ?? meta.title
+    const canonical = this.canonicalUrl(meta.canonicalPath)
 
     const tags: Record<string, string | undefined> = {
       description: meta.description,
@@ -30,7 +31,7 @@ export class SeoService {
       'og:description': meta.description,
       'og:type': meta.type ?? 'website',
       'og:site_name': this.gallery.photographer,
-      'og:url': this.canonicalUrl(),
+      'og:url': canonical,
       'og:image': image,
       'og:image:alt': image ? imageAlt : undefined,
       'twitter:card': 'summary_large_image',
@@ -46,6 +47,19 @@ export class SeoService {
       if (key.startsWith('og:')) this.meta.updateTag({ property: key, content })
       else this.meta.updateTag({ name: key, content })
     }
+
+    this.updateCanonicalLink(canonical)
+  }
+
+  private updateCanonicalLink(url: string | undefined): void {
+    if (!url) return
+    let link: HTMLLinkElement | null = this.document.querySelector('link[rel="canonical"]')
+    if (!link) {
+      link = this.document.createElement('link')
+      link.setAttribute('rel', 'canonical')
+      this.document.head.appendChild(link)
+    }
+    link.setAttribute('href', url)
   }
 
   /** Newest photo's share-sized image (viewer format ≤2000px), if any. */
@@ -63,21 +77,23 @@ export class SeoService {
     return `${origin}${path.startsWith('/') ? '' : '/'}${path}`
   }
 
-  /** Canonical page URL (origin + path, no query) for `og:url`. */
-  private canonicalUrl(): string | undefined {
+  /** Canonical page URL (origin + path, no query) for `og:url` and `<link rel="canonical">`. */
+  private canonicalUrl(overridePath?: string): string | undefined {
     const origin = this.origin()
     if (!origin) return undefined
-    let path = '/'
-    if (isPlatformServer(this.platformId)) {
-      try {
-        path = new URL(this.request?.url ?? '/', 'http://localhost').pathname
-      } catch {
-        path = '/'
+    let path = overridePath ?? '/'
+    if (!overridePath) {
+      if (isPlatformServer(this.platformId)) {
+        try {
+          path = new URL(this.request?.url ?? '/', 'http://localhost').pathname
+        } catch {
+          path = '/'
+        }
+      } else {
+        path = this.document.location.pathname
       }
-    } else {
-      path = this.document.location.pathname
     }
-    return `${origin}${path}`
+    return `${origin}${path.startsWith('/') ? '' : '/'}${path}`
   }
 
   /** Public origin: forwarded headers on the server (https default), else the page origin. */

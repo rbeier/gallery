@@ -4,6 +4,7 @@ import * as React from 'react'
 import { DatePicker, Field, useComposedRefs } from '@strapi/design-system'
 import { useIntl } from 'react-intl'
 import { useField, useFocusInputField } from '@strapi/strapi/admin'
+import { photoSlug } from '../lib/slug'
 
 const MAX_DATE = new Date(2099, 11, 31)
 
@@ -171,7 +172,7 @@ const ViewLiveAction = ({ model, document }: any) => {
 
   let targetUrl: string | null = null
   if (isPhoto && document?.id != null) {
-    targetUrl = `${baseUrl}/photo/${document.id}`
+    targetUrl = `${baseUrl}/photo/${photoSlug(document.id, document.title)}`
   } else if (isAlbum && document?.slug) {
     targetUrl = `${baseUrl}/albums/${document.slug}`
   }

@@ -1,7 +1,7 @@
 <a
   appInViewport
   #vp="inViewport"
-  [routerLink]="['/photo', photo().id]"
+  [routerLink]="['/photo', photo().slug]"
   [queryParams]="linkParams()"
   [attr.aria-label]="photo().title + ' — ' + photo().meta"
   class="group relative block overflow-hidden rounded-tile animate-rise focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"
