@@ -2,9 +2,14 @@ import type { Core } from '@strapi/strapi';
 
 const config = ({ env }: Core.Config.Shared.ConfigParams): Core.Config.Admin => {
   // Frontend origin the "Preview" button on an edit page links to. Defaults to
-  // the dev server; set CLIENT_URL to the public site (e.g. https://rbeier.dev)
-  // in production.
-  const clientUrl = env('CLIENT_URL', 'http://localhost:4200');
+  // https://rbeier.dev in production, http://localhost:4200 in development.
+  const rawClientUrl = env('CLIENT_URL');
+  const clientUrl =
+    rawClientUrl && rawClientUrl.trim() !== ''
+      ? rawClientUrl
+      : env('NODE_ENV') === 'production'
+        ? 'https://rbeier.dev'
+        : 'http://localhost:4200';
 
   return {
   auth: {
@@ -33,7 +38,7 @@ const config = ({ env }: Core.Config.Shared.ConfigParams): Core.Config.Admin => 
   preview: {
     enabled: true,
     config: {
-      allowedOrigins: [clientUrl],
+      allowedOrigins: Array.from(new Set([clientUrl, 'https://rbeier.dev', 'http://localhost:4200'])),
       async handler(uid, { documentId }) {
         if (uid === 'api::photo.photo') {
           const photo = await strapi.documents(uid).findOne({ documentId });

@@ -47,7 +47,7 @@ jobs:
             JWT_SECRET="${{ secrets.JWT_SECRET }}"
             TRANSFER_TOKEN_SALT="${{ secrets.TRANSFER_TOKEN_SALT }}"
             ENCRYPTION_KEY="${{ secrets.ENCRYPTION_KEY }}"
-            CLIENT_URL="${{ secrets.CLIENT_URL }}"
+            CLIENT_URL="${{ secrets.CLIENT_URL || 'https://rbeier.dev' }}"
             STRAPI_BASE_URL="${{ secrets.STRAPI_BASE_URL }}"
             EOF
 
