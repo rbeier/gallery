@@ -1,147 +1,103 @@
 @if (photo(); as photo) {
-  <div
-    class="flex min-h-screen animate-fade flex-col bg-bg text-ink d:h-screen d:flex-row-reverse d:overflow-hidden"
-  >
-    <!-- Image pane. Mobile fills most of the viewport so the caption panel below
+<div class="flex min-h-screen animate-fade flex-col bg-bg text-ink d:h-screen d:flex-row-reverse d:overflow-hidden">
+  <!-- Image pane. Mobile fills most of the viewport so the caption panel below
          only peeks in — a hint that there's more on scroll. Desktop fills the full
          row height so portrait photos use the whole viewport. -->
-    <div
-      class="relative flex h-[86vh] flex-none items-center justify-center bg-viewer-mat p-4 d:h-auto d:min-h-0 d:min-w-0 d:flex-1 d:p-[38px]"
-      (touchstart)="onTouchStart($event)"
-      (touchend)="onTouchEnd($event)"
-    >
-      @if (photo.srcFull ?? photo.src; as src) {
-        <!-- Higher-res (capped at 2000px) so the image stays crisp on large
+  <div
+    class="relative flex h-[86vh] flex-none items-center justify-center bg-viewer-mat p-4 d:h-auto d:min-h-0 d:min-w-0 d:flex-1 d:p-[38px]"
+    (touchstart)="onTouchStart($event)" (touchend)="onTouchEnd($event)">
+    @if (photo.srcFull ?? photo.src; as src) {
+    <!-- Higher-res (capped at 2000px) so the image stays crisp on large
              screens without exposing the original. Fill the pane (grows to any
              screen size) and scale to fit — object-contain letterboxes onto the mat. -->
-        <img
-          [src]="src"
-          [alt]="photo.title"
-          decoding="async"
-          draggable="false"
-          class="image-guard pointer-events-none h-full w-full object-contain"
-        />
-        <!-- Deters casual saving: sits over the image so right-click / long-press
+    <img [src]="src" [alt]="photo.title" decoding="async" draggable="false"
+      class="image-guard pointer-events-none h-full w-full object-contain" />
+    <!-- Deters casual saving: sits over the image so right-click / long-press
              hits an empty div, not the <img>. Not real protection — the file is
              still reachable via devtools — just raises the bar. -->
-        <div
-          class="image-guard absolute inset-0 z-10"
-          (contextmenu)="$event.preventDefault()"
-          aria-hidden="true"
-        ></div>
-      } @else {
-        <div
-          class="h-full max-h-full max-w-full"
-          [style.aspect-ratio]="photo.ratio"
-          [style.background]="photo.grad"
-          [style.border-radius.px]="3"
-        ></div>
-      }
+    <div class="image-guard absolute inset-0 z-10" (contextmenu)="$event.preventDefault()" aria-hidden="true"></div>
+    } @else {
+    <div class="h-full max-h-full max-w-full" [style.aspect-ratio]="photo.ratio" [style.background]="photo.grad"
+      [style.border-radius.px]="3"></div>
+    }
 
-      <!-- Navigation arrows: pinned to the bottom-left / bottom-right of the image
+    <!-- Navigation arrows: pinned to the bottom-left / bottom-right of the image
            container (the mat), on both mobile and desktop. -->
-      <button
-        type="button"
-        (click)="step(-1)"
-        aria-label="Previous photograph"
-        class="absolute bottom-4 left-4 z-20 flex h-[46px] w-[46px] items-center justify-center rounded-full border border-line bg-surface text-accent opacity-95 transition-transform active:scale-90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent d:bottom-6 d:left-6"
-      >
-        <svg viewBox="0 -960 960 960" aria-hidden="true" class="h-[22px] w-[22px] fill-current">
-          <path d="M560-240 320-480l240-240 56 56-184 184 184 184-56 56Z" />
-        </svg>
-      </button>
-      <button
-        type="button"
-        (click)="step(1)"
-        aria-label="Next photograph"
-        class="absolute bottom-4 right-4 z-20 flex h-[46px] w-[46px] items-center justify-center rounded-full border border-line bg-surface text-accent opacity-95 transition-transform active:scale-90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent d:bottom-6 d:right-6"
-      >
-        <svg viewBox="0 -960 960 960" aria-hidden="true" class="h-[22px] w-[22px] fill-current">
-          <path d="M504-480 320-664l56-56 240 240-240 240-56-56 184-184Z" />
-        </svg>
-      </button>
-    </div>
-
-    <!-- Caption panel -->
-    <div
-      class="flex flex-none animate-rise flex-col overflow-y-auto px-[22px] pt-[26px] pb-[56px] d:w-[320px] d:flex-none d:p-[52px]"
-    >
-      <app-brand class="mb-[26px] hidden border-b border-line pb-[22px] d:block" />
-      <div
-        class="mb-[22px] flex items-center justify-between gap-4"
-      >
-        <button
-          type="button"
-          (click)="close()"
-          class="cursor-pointer border-0 bg-transparent p-0 font-mono text-[11px] tracking-[.08em] text-muted"
-        >
-          ← {{ backLabel() }}
-        </button>
-        <div class="font-mono text-[11px] tracking-[.12em] text-muted">{{ counter() }}</div>
-      </div>
-      <h1 class="font-serif text-title font-normal">{{ photo.title }}</h1>
-      @if (photo.description) {
-        <p class="mt-4 max-w-[26em] text-[15px] leading-[1.65] text-ink/80">
-          {{ photo.description }}
-        </p>
-      }
-
-      <dl class="mt-7 flex flex-col gap-[15px] border-t border-line pt-[22px]">
-        @for (row of metaRows(); track row.key) {
-          <div class="flex gap-4">
-            <dt
-              class="w-[88px] flex-none pt-[2px] font-mono text-[10px] uppercase tracking-[.1em] text-muted"
-            >
-              {{ row.key }}
-            </dt>
-            <dd class="m-0 text-[14px] leading-[1.4] text-ink">
-              @if (row.link) {
-                <a
-                  [routerLink]="row.link"
-                  class="text-accent! hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-                  >{{ row.value }}</a
-                >
-              } @else {
-                {{ row.value }}
-              }
-            </dd>
-          </div>
-        }
-      </dl>
-
-      <div class="mt-[22px] flex flex-wrap gap-[7px]">
-        @for (tag of photo.tags; track tag) {
-          <a
-            routerLink="/search"
-            [queryParams]="{ tag: tag }"
-            class="rounded-pill bg-chip px-[10px] py-[5px] font-mono text-[11px] text-accent! transition-opacity hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-            >#{{ tag }}</a
-          >
-        }
-      </div>
-
-      @if (auth.isLoggedIn()) {
-        <div class="mt-6 border-t border-line pt-4">
-          <a
-            [href]="auth.adminUrl(photo.documentId)"
-            class="inline-block font-mono text-[11px] tracking-[.08em] text-muted visited:text-muted transition-colors hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-          >
-            Admin
-          </a>
-        </div>
-      }
-    </div>
+    <button type="button" (click)="step(-1)" aria-label="Previous photograph"
+      class="absolute bottom-4 left-4 z-20 flex h-[46px] w-[46px] items-center justify-center rounded-full border border-line bg-surface text-accent opacity-95 transition-transform active:scale-90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent d:bottom-6 d:left-6">
+      <svg viewBox="0 -960 960 960" aria-hidden="true" class="h-[22px] w-[22px] fill-current">
+        <path d="M560-240 320-480l240-240 56 56-184 184 184 184-56 56Z" />
+      </svg>
+    </button>
+    <button type="button" (click)="step(1)" aria-label="Next photograph"
+      class="absolute bottom-4 right-4 z-20 flex h-[46px] w-[46px] items-center justify-center rounded-full border border-line bg-surface text-accent opacity-95 transition-transform active:scale-90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent d:bottom-6 d:right-6">
+      <svg viewBox="0 -960 960 960" aria-hidden="true" class="h-[22px] w-[22px] fill-current">
+        <path d="M504-480 320-664l56-56 240 240-240 240-56-56 184-184Z" />
+      </svg>
+    </button>
   </div>
-} @else {
-  <div class="flex min-h-screen flex-col items-center justify-center gap-4 bg-bg text-muted">
-    <p class="font-serif text-[20px]">Photograph not found.</p>
+
+  <!-- Caption panel -->
+  <div
+    class="flex flex-none animate-rise flex-col overflow-y-auto px-[22px] pt-[26px] pb-[56px] d:w-[320px] d:flex-none d:p-[52px]">
+    <app-brand class="mb-[26px] hidden border-b border-line pb-[22px] d:block" />
+    <div class="mb-[22px] flex items-center justify-between gap-4">
+      <button type="button" (click)="close()"
+        class="cursor-pointer border-0 bg-transparent p-0 font-mono text-[11px] tracking-[.08em] text-muted">
+        ← {{ backLabel() }}
+      </button>
+      <div class="font-mono text-[11px] tracking-[.12em] text-muted">{{ counter() }}</div>
+    </div>
+    <h1 class="font-serif text-title font-normal">{{ photo.title }}</h1>
+    @if (photo.description) {
+    <p class="mt-4 max-w-[26em] text-[15px] leading-[1.65] text-ink/80">
+      {{ photo.description }}
+    </p>
+    }
+
+    <dl class="mt-7 flex flex-col gap-[15px] border-t border-line pt-[22px]">
+      @for (row of metaRows(); track row.key) {
+      <div class="flex gap-4">
+        <dt class="w-[88px] flex-none pt-[2px] font-mono text-[10px] uppercase tracking-[.1em] text-muted">
+          {{ row.key }}
+        </dt>
+        <dd class="m-0 text-[14px] leading-[1.4] text-ink">
+          @if (row.link) {
+          <a [routerLink]="row.link"
+            class="text-accent! hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent">{{
+            row.value }}</a>
+          } @else {
+          {{ row.value }}
+          }
+        </dd>
+      </div>
+      }
+    </dl>
+
+    <div class="mt-[22px] flex flex-wrap gap-[7px]">
+      @for (tag of photo.tags; track tag) {
+      <a routerLink="/search" [queryParams]="{ tag: tag }"
+        class="rounded-pill bg-chip px-[10px] py-[5px] font-mono text-[11px] text-accent! transition-opacity hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent">#{{
+        tag }}</a>
+      }
+    </div>
+
     @if (auth.isLoggedIn()) {
-      <a
-        [href]="auth.adminUrl()"
-        class="font-mono text-[11px] tracking-[.08em] text-muted visited:text-muted hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-      >
-        Admin
+    <div class="mt-6 border-t border-line pt-4">
+      <a [href]="auth.adminUrl(photo.documentId)"
+        class="flex items-center gap-2 font-mono text-accent! text-[12px] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent">
+        <svg viewBox="0 -960 960 960" aria-hidden="true" class="h-5 w-5 fill-current">
+          <path
+            d="M480-80q-139-35-229.5-159.5T160-516v-244l320-120 320 120v244q0 152-90.5 276.5T480-80Zm0-84q104-33 172-131t68-221v-189l-240-90-240 90v189q0 123 68 221t172 131Zm0-316q33 0 56.5-23.5T560-560q0-33-23.5-56.5T480-640q-33 0-56.5 23.5T400-560q0 33 23.5 56.5T480-480Zm0 160q55 0 101-26.5t67-71.5q-37-17-80.5-26.5T480-454q-44 0-87.5 9.5T312-418q21 45 67 71.5t101 26.5Z" />
+        </svg>
+        Edit resource in CMS
       </a>
+    </div>
     }
   </div>
+</div>
+} @else {
+<div class="flex min-h-screen flex-col items-center justify-center gap-4 bg-bg text-muted">
+  <p class="font-serif text-[20px]">Photograph not found.</p>
+</div>
 }
