@@ -166,14 +166,16 @@ async function tidyPhotoEditView(strapi: Core.Strapi) {
 
   const config = JSON.parse(entry.value);
   config.layouts.edit = [
-    [{ name: 'title', size: 12 }],
-    [{ name: 'description', size: 12 }],
     [
-      { name: 'lens', size: 6 },
-      { name: 'date', size: 6 },
+      { name: 'title', size: 8 },
+      { name: 'date', size: 4 },
     ],
-    [{ name: 'location', size: 12 }],
+    [{ name: 'description', size: 12 }],
     [{ name: 'image', size: 12 }],
+    [
+      { name: 'location', size: 6 },
+      { name: 'lens', size: 6 },
+    ],
     [
       { name: 'album', size: 6 },
       { name: 'tags', size: 6 },
