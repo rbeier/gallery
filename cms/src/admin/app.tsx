@@ -65,6 +65,95 @@ const GermanDateInput = React.forwardRef<HTMLInputElement, any>(
   }
 )
 
+function initAutocompleteDisabler() {
+  if (typeof document === 'undefined') return
+
+  const isTargetInput = (el: Element | null): el is HTMLInputElement => {
+    if (!el || !(el instanceof HTMLInputElement)) return false
+    const name = el.name || el.getAttribute('name') || ''
+    const id = el.id || el.getAttribute('id') || ''
+    const role = el.getAttribute('role') || ''
+    const ariaAutocomplete = el.getAttribute('aria-autocomplete') || ''
+
+    return (
+      name === 'lens' ||
+      name === 'location' ||
+      id === 'lens' ||
+      id === 'location' ||
+      role === 'combobox' ||
+      ariaAutocomplete === 'list'
+    )
+  }
+
+  const disableAutocomplete = (input: HTMLInputElement) => {
+    if (input.getAttribute('autocomplete') !== 'off') {
+      input.setAttribute('autocomplete', 'off')
+    }
+    if (input.autocomplete !== 'off') {
+      input.autocomplete = 'off'
+    }
+    input.setAttribute('autocorrect', 'off')
+    input.setAttribute('autocapitalize', 'off')
+    input.setAttribute('spellcheck', 'false')
+    input.setAttribute('data-lpignore', 'true')
+    input.setAttribute('data-1p-ignore', 'true')
+  }
+
+  const applyToElementAndChildren = (root: Element | Document) => {
+    if (isTargetInput(root as Element)) {
+      disableAutocomplete(root as HTMLInputElement)
+    }
+    const matching = root.querySelectorAll<HTMLInputElement>(
+      'input[name="lens"], input[name="location"], input#lens, input#location, input[role="combobox"], input[aria-autocomplete="list"]'
+    )
+    matching.forEach(disableAutocomplete)
+  }
+
+  const handleEvent = (e: Event) => {
+    if (isTargetInput(e.target as Element)) {
+      disableAutocomplete(e.target as HTMLInputElement)
+    }
+  }
+
+  document.addEventListener('focusin', handleEvent, true)
+  document.addEventListener('pointerdown', handleEvent, true)
+  document.addEventListener('mousedown', handleEvent, true)
+
+  const observer = new MutationObserver((mutations) => {
+    for (const mutation of mutations) {
+      if (mutation.type === 'childList') {
+        mutation.addedNodes.forEach((node) => {
+          if (node instanceof HTMLElement) {
+            applyToElementAndChildren(node)
+          }
+        })
+      } else if (mutation.type === 'attributes' && isTargetInput(mutation.target as Element)) {
+        disableAutocomplete(mutation.target as HTMLInputElement)
+      }
+    }
+  })
+
+  if (document.body) {
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true,
+      attributes: true,
+      attributeFilter: ['name', 'id', 'role', 'autocomplete'],
+    })
+    applyToElementAndChildren(document)
+  } else {
+    document.addEventListener('DOMContentLoaded', () => {
+      observer.observe(document.body, {
+        childList: true,
+        subtree: true,
+        attributes: true,
+        attributeFilter: ['name', 'id', 'role', 'autocomplete'],
+      })
+      applyToElementAndChildren(document)
+    })
+  }
+}
+
 export default {
   config: {
     locales: ['de'],
@@ -83,6 +172,54 @@ export default {
       Component: GermanDateInput,
     })
 
+    app.registerHook(
+      'Admin/CM/pages/EditView/mutate-edit-view-layout',
+      ({ layout, query }: { layout: any; query: any }) => {
+        const disableAutocompleteOnField = (field: any) => {
+          if (
+            field?.name === 'lens' ||
+            field?.name === 'location' ||
+            field?.type === 'relation' ||
+            field?.attribute?.type === 'relation'
+          ) {
+            return {
+              ...field,
+              autoComplete: 'off',
+              autoCorrect: 'off',
+              autoCapitalize: 'off',
+              spellCheck: false,
+              'data-lpignore': 'true',
+              'data-1p-ignore': 'true',
+            }
+          }
+          return field
+        }
+
+        if (layout?.layout && Array.isArray(layout.layout)) {
+          layout.layout = layout.layout.map((panel: any) =>
+            Array.isArray(panel)
+              ? panel.map((row: any) =>
+                  Array.isArray(row) ? row.map(disableAutocompleteOnField) : row
+                )
+              : panel
+          )
+        }
+
+        if (layout?.components && typeof layout.components === 'object') {
+          for (const key of Object.keys(layout.components)) {
+            const comp = layout.components[key]
+            if (comp?.layout && Array.isArray(comp.layout)) {
+              comp.layout = comp.layout.map((row: any) =>
+                Array.isArray(row) ? row.map(disableAutocompleteOnField) : row
+              )
+            }
+          }
+        }
+
+        return { layout, query }
+      }
+    )
+
     const isDev =
       typeof window !== 'undefined' &&
       (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
@@ -98,5 +235,8 @@ export default {
       permissions: [],
       position: -1,
     })
+  },
+  bootstrap() {
+    initAutocompleteDisabler()
   },
 }
