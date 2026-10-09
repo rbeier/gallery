@@ -42,7 +42,7 @@ export class Home {
     })
 
     inject(SeoService).set({
-      title: `${this.gallery.photographer} — Photography`,
+      title: `${this.gallery.photographer} Photography`,
       description:
         this.profile.bio || `A minimalist photography portfolio. ${this.gallery.stat()}.`,
     })
