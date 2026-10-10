@@ -2,6 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import type { Core } from '@strapi/strapi';
 import { installAvifPipeline } from './lib/avif-pipeline';
+import { installExifPipeline } from './lib/exif-pipeline';
 import { ALBUMS, PHOTOGRAPHER } from './seed-data';
 import { generateMeta } from './seed-generate';
 
@@ -184,9 +185,45 @@ async function tidyPhotoEditView(strapi: Core.Strapi) {
   await store.update({ where: { key }, data: { value: JSON.stringify(config) } });
 }
 
+async function tidyLensEditView(strapi: Core.Strapi) {
+  const key = 'plugin_content_manager_configuration_content_types::api::lens.lens';
+  const store = strapi.db.query('strapi::core-store');
+  const entry = await store.findOne({ where: { key } });
+  if (!entry) return;
+
+  const config = JSON.parse(entry.value);
+  config.metadatas = config.metadatas || {};
+  config.metadatas.exifLensModel = {
+    edit: {
+      label: 'EXIF Lens Model',
+      description: 'EXIF lens string to match (e.g. "SIGMA 18-50mm F2.8 DC DN | Contemporary 021")',
+      placeholder: 'SIGMA 18-50mm F2.8 DC DN | Contemporary 021',
+      visible: true,
+      editable: true,
+    },
+    list: {
+      label: 'EXIF Lens Model',
+      searchable: true,
+      sortable: true,
+    },
+  };
+  if (!config.layouts.list.includes('exifLensModel')) {
+    config.layouts.list = ['id', 'name', 'exifLensModel', 'createdAt'];
+  }
+  config.layouts.edit = [
+    [
+      { name: 'name', size: 6 },
+      { name: 'exifLensModel', size: 6 },
+    ],
+    [{ name: 'photos', size: 12 }],
+  ];
+  await store.update({ where: { key }, data: { value: JSON.stringify(config) } });
+}
+
 export default {
   register({ strapi }: { strapi: Core.Strapi }) {
     installAvifPipeline(strapi);
+    installExifPipeline(strapi);
   },
 
   async bootstrap({ strapi }: { strapi: Core.Strapi }) {
@@ -194,8 +231,10 @@ export default {
     await seedContent(strapi);
     try {
       await tidyPhotoEditView(strapi);
+      await tidyLensEditView(strapi);
     } catch (err) {
-      strapi.log.warn(`[layout] Could not set Photo edit view: ${err}`);
+      strapi.log.warn(`[layout] Could not set edit views: ${err}`);
     }
   },
 };
+

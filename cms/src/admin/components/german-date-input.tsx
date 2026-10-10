@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { DatePicker, Field, useComposedRefs } from '@strapi/design-system'
 import { useIntl } from 'react-intl'
-import { useField, useFocusInputField } from '@strapi/strapi/admin'
+import { useField, useFocusInputField, useForm, useFetchClient } from '@strapi/strapi/admin'
 
 const MAX_DATE = new Date(2099, 11, 31)
 
@@ -108,6 +108,10 @@ export const GermanDateInput = React.forwardRef<HTMLInputElement, any>(
 
     const value = typeof field.value === 'string' && field.value ? new Date(field.value) : undefined
 
+    const form = useForm('GermanDateInput', (state) => state?.values, false)
+    const { get } = useFetchClient()
+    const autoFilledImageIdRef = React.useRef<string | number | null>(null)
+
     React.useEffect(() => {
       if (typeof field.value === 'string' && field.value) {
         setLastValidDate(new Date(field.value))
@@ -115,6 +119,121 @@ export const GermanDateInput = React.forwardRef<HTMLInputElement, any>(
         setLastValidDate(null)
       }
     }, [field.value])
+
+    const autoFilledLensRef = React.useRef<boolean>(false)
+
+    // Auto-fill date & lens from image EXIF if the user attaches/selects an image on the Photo resource
+    React.useEffect(() => {
+      const imageVal = (form as any)?.image
+      if (!imageVal) {
+        autoFilledImageIdRef.current = null
+        autoFilledLensRef.current = false
+        return
+      }
+
+      const asset = Array.isArray(imageVal) ? imageVal[0] : imageVal
+      let imageId: number | string | null = null
+      let directExifDate: string | null = null
+      let directExifLens: string | null = null
+
+      if (typeof asset === 'object' && asset !== null) {
+        imageId = asset.id ?? asset.documentId ?? null
+        directExifDate = asset.provider_metadata?.exif?.date ?? null
+        directExifLens = asset.provider_metadata?.exif?.lens ?? null
+      } else if (typeof asset === 'number' || typeof asset === 'string') {
+        imageId = asset
+      }
+
+      if (!imageId || autoFilledImageIdRef.current === imageId) {
+        return
+      }
+
+      const isDateEmpty = !field.value
+      const wasDateAutoFilled = autoFilledImageIdRef.current !== null
+
+      const applyExifDate = (exifDateStr: string) => {
+        if (!isDateEmpty && !wasDateAutoFilled) return
+        const parsed = new Date(exifDateStr)
+        if (!Number.isNaN(parsed.getTime())) {
+          autoFilledImageIdRef.current = imageId
+          field.onChange(name, exifDateStr)
+          setLastValidDate(parsed)
+        }
+      }
+
+      const matchLensModel = (lensModel?: string | null, targetExif?: string | null) => {
+        if (!lensModel || !targetExif) return false
+        const target = targetExif.trim().toLowerCase()
+        const candidates = lensModel
+          .split(/[\n,;]+/)
+          .map((s) => s.trim().toLowerCase())
+          .filter(Boolean)
+        if (candidates.some((c) => c === target)) return true
+        return candidates.some((c) => c.length >= 3 && (target.includes(c) || c.includes(target)))
+      }
+
+      const applyExifLens = (lensString: string) => {
+        if (!lensString) return
+        const currentLens = (form as any)?.lens
+        const isLensEmpty =
+          !currentLens ||
+          (typeof currentLens === 'object' && Array.isArray(currentLens.connect) && currentLens.connect.length === 0)
+
+        if (!isLensEmpty && !autoFilledLensRef.current) {
+          return
+        }
+
+        get('/content-manager/collection-types/api::lens.lens?pageSize=100')
+          .then((res: any) => {
+            const lenses: any[] = res?.data?.results ?? res?.data?.data ?? []
+            if (Array.isArray(lenses)) {
+              const matched = lenses.find((l) => matchLensModel(l.exifLensModel, lensString))
+              if (matched && (form as any)?.onChange) {
+                const item = {
+                  id: matched.id,
+                  documentId: matched.documentId,
+                  name: matched.name,
+                  label: matched.name,
+                  status: 'published',
+                  apiData: {
+                    id: matched.id,
+                    documentId: matched.documentId,
+                    locale: null,
+                    isTemporary: true,
+                  },
+                }
+                autoFilledLensRef.current = true
+                ;(form as any).onChange('lens.connect', [item])
+                ;(form as any).onChange('lens', { connect: [item] })
+              }
+            }
+          })
+          .catch(() => {
+            // Ignore fetch errors
+          })
+      }
+
+      if (directExifDate || directExifLens) {
+        if (directExifDate) applyExifDate(directExifDate)
+        if (directExifLens) applyExifLens(directExifLens)
+      } else {
+        let isCancelled = false
+        get(`/upload/files/${imageId}`)
+          .then((res: any) => {
+            if (isCancelled) return
+            const fetchedDate = res?.data?.provider_metadata?.exif?.date
+            const fetchedLens = res?.data?.provider_metadata?.exif?.lens
+            if (fetchedDate) applyExifDate(fetchedDate)
+            if (fetchedLens) applyExifLens(fetchedLens)
+          })
+          .catch(() => {
+            // Ignore fetch errors
+          })
+        return () => {
+          isCancelled = true
+        }
+      }
+    }, [form, field.value, get, name])
 
     const handleDateChange = (date?: Date) => {
       if (!date) {
