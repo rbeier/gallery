@@ -1,8 +1,9 @@
 import type { StrapiApp } from '@strapi/strapi/admin'
-import { ExternalLink } from '@strapi/icons'
+import { ExternalLink, Plus } from '@strapi/icons'
 import * as React from 'react'
-import { DatePicker, Field, useComposedRefs } from '@strapi/design-system'
+import { Button, DatePicker, Field, useComposedRefs } from '@strapi/design-system'
 import { useIntl } from 'react-intl'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { useField, useFocusInputField } from '@strapi/strapi/admin'
 import { photoSlug } from '../lib/slug'
 
@@ -199,6 +200,67 @@ const ViewLiveAction = ({ model, document }: any) => {
 ViewLiveAction.type = 'view-live'
 ViewLiveAction.position = 'panel'
 
+const CreatePhotoAction = ({ model, document }: any) => {
+  const { formatMessage } = useIntl()
+  const navigate = useNavigate()
+
+  const isPhoto = model === 'api::photo.photo'
+
+  if (!isPhoto || !document) {
+    return null
+  }
+
+  const handleOnClick = () => {
+    navigate('/content-manager/collection-types/api::photo.photo/create')
+  }
+
+  return {
+    icon: <Plus />,
+    label: formatMessage({
+      id: 'content-manager.actions.create-photo',
+      defaultMessage: 'Neues Foto erstellen',
+    }),
+    onClick: handleOnClick,
+    position: 'header',
+    variant: 'secondary',
+  }
+}
+
+CreatePhotoAction.type = 'create-photo'
+CreatePhotoAction.position = 'header'
+
+const CreatePhotoButton = ({ slug }: { slug?: string }) => {
+  const { formatMessage } = useIntl()
+  const navigate = useNavigate()
+  const location = useLocation()
+
+  if (slug !== 'api::photo.photo') {
+    return null
+  }
+
+  if (location.pathname.endsWith('/create')) {
+    return null
+  }
+
+  const handleOnClick = () => {
+    navigate('/content-manager/collection-types/api::photo.photo/create')
+  }
+
+  return (
+    <Button
+      fullWidth
+      variant="secondary"
+      startIcon={<Plus />}
+      onClick={handleOnClick}
+    >
+      {formatMessage({
+        id: 'content-manager.actions.create-photo',
+        defaultMessage: 'Neues Foto erstellen',
+      })}
+    </Button>
+  )
+}
+
 export default {
   config: {
     locales: ['de'],
@@ -206,10 +268,12 @@ export default {
       de: {
         'app.components.LeftMenu.frontend': 'Zur Website',
         'content-manager.actions.view-live': 'Auf Website ansehen',
+        'content-manager.actions.create-photo': 'Neues Foto erstellen',
       },
       en: {
         'app.components.LeftMenu.frontend': 'Website',
         'content-manager.actions.view-live': 'View on website',
+        'content-manager.actions.create-photo': 'Create new photo',
       },
     },
   },
@@ -289,7 +353,14 @@ export default {
     const cm = app.getPlugin('content-manager')
     if (cm?.apis?.addDocumentAction) {
       cm.apis.addDocumentAction((actions: any[]) => {
-        return [...actions, ViewLiveAction]
+        return [...actions, ViewLiveAction, CreatePhotoAction]
+      })
+    }
+
+    if (cm?.injectComponent) {
+      cm.injectComponent('editView', 'right-links', {
+        name: 'create-photo-button',
+        Component: CreatePhotoButton,
       })
     }
   },
