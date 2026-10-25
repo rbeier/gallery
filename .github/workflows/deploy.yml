@@ -52,7 +52,7 @@ jobs:
             EOF
 
             # Build and restart containers natively on the ARM64 VPS host
-            docker compose up --build -d
+            docker compose up --build --pull always -d
 
             # Clean up old unused docker images to save space
             docker image prune -f
